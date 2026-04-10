@@ -1186,7 +1186,8 @@ namespace RPA_Parser
                     case 'H':
                         if (endianFlip)
                         {
-                            var deezBytes = bytes.Reverse().Skip(byteArrayPosition).Take(2).ToArray();
+                            var deezBytes = bytes.Skip(byteArrayPosition).Take(2).ToArray();
+                            deezBytes.Reverse();
                             outputList.Add(BitConverter.ToUInt16(deezBytes, 0));
                         }
                         else
@@ -1245,7 +1246,7 @@ namespace RPA_Parser
             foreach (object o in items)
             {
                 byte[] theseBytes = TypeAgnosticGetBytes(o);
-                if (endianFlip) theseBytes = theseBytes.Reverse().ToArray();
+                if (endianFlip) theseBytes.Reverse();
                 outString += GetFormatSpecifierFor(o);
                 outputBytes.AddRange(theseBytes);
             }
