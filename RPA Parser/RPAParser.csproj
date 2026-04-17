@@ -3,11 +3,11 @@
     <PropertyGroup>
         <TargetFramework>net461</TargetFramework>
         <RootNamespace>RPA_Parser</RootNamespace>
-        <UseWindowsForms>true</UseWindowsForms>
-        <LangVersion>default</LangVersion>
-        <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-        <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="WebPWrapper.cs" />
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Ionic.Zlib" Version="1.9.1.5" />
