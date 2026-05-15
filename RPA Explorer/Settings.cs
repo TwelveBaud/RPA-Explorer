@@ -42,10 +42,10 @@ namespace RPA_Explorer
                                 SetSetting("Language", value, typeof(Program));
                                 break;
                             case "python":
-                                SetSetting("PythonPath", value, "Code.previewer.dll", "RpycPreviewer");
+                                SetSetting("PythonPath", value, "Code.previewer", "RpycPreviewer");
                                 break;
                             case "unpyrc":
-                                SetSetting("ScriptPath", value, "Code.previewer.dll", "RpycPreviewer");
+                                SetSetting("ScriptPath", value, "Code.previewer", "RpycPreviewer");
                                 break;
                             case "archive":
                                 SetSetting("LastOpenedFile", value, typeof(MainWindow));

@@ -18,10 +18,11 @@ namespace RPA_Explorer
 
         private void LoadTexts()
         {
+            var rawVersion = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.Split('+');
             Text = Lang.About;
             lblProductName.Text = Lang.Explorer_title;
-            lblProductVersion.Text = string.Format(Lang.About_version,
-                Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+            lblProductVersion.Text = string.Format(Lang.About_version, rawVersion[0]);
+            lblCommit.Text = string.Format(Lang.About_commit, rawVersion[1]);
             lblAuthors.Text = Lang.About_creators;
             lblInspiration.Text = Lang.About_inspiration;
             lblInspiration.Links.Clear();

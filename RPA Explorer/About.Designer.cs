@@ -37,6 +37,7 @@
             this.lblInspiration = new System.Windows.Forms.LinkLabel();
             this.lblAuthors = new System.Windows.Forms.Label();
             this.lblGithub = new System.Windows.Forms.LinkLabel();
+            this.lblCommit = new System.Windows.Forms.Label();
             this.lblProductVersion = new System.Windows.Forms.Label();
             this.lblProductName = new System.Windows.Forms.Label();
             this.btnClose = new System.Windows.Forms.Button();
@@ -74,7 +75,7 @@
             tlpTopMatter.Name = "tlpTopMatter";
             tlpTopMatter.RowCount = 1;
             tlpTopMatter.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            tlpTopMatter.Size = new System.Drawing.Size(418, 128);
+            tlpTopMatter.Size = new System.Drawing.Size(434, 128);
             tlpTopMatter.TabIndex = 0;
             // 
             // pbxLogo
@@ -93,13 +94,14 @@
             pnlTopMatterText.Controls.Add(this.lblInspiration);
             pnlTopMatterText.Controls.Add(this.lblAuthors);
             pnlTopMatterText.Controls.Add(this.lblGithub);
+            pnlTopMatterText.Controls.Add(this.lblCommit);
             pnlTopMatterText.Controls.Add(this.lblProductVersion);
             pnlTopMatterText.Controls.Add(this.lblProductName);
             pnlTopMatterText.Dock = System.Windows.Forms.DockStyle.Fill;
             pnlTopMatterText.Location = new System.Drawing.Point(128, 0);
             pnlTopMatterText.Margin = new System.Windows.Forms.Padding(0);
             pnlTopMatterText.Name = "pnlTopMatterText";
-            pnlTopMatterText.Size = new System.Drawing.Size(290, 128);
+            pnlTopMatterText.Size = new System.Drawing.Size(306, 128);
             pnlTopMatterText.TabIndex = 1;
             // 
             // lblInspiration
@@ -107,7 +109,7 @@
             this.lblInspiration.AutoSize = true;
             this.lblInspiration.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblInspiration.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
-            this.lblInspiration.Location = new System.Drawing.Point(0, 71);
+            this.lblInspiration.Location = new System.Drawing.Point(0, 84);
             this.lblInspiration.Margin = new System.Windows.Forms.Padding(3);
             this.lblInspiration.Name = "lblInspiration";
             this.lblInspiration.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
@@ -120,7 +122,7 @@
             // 
             this.lblAuthors.AutoSize = true;
             this.lblAuthors.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblAuthors.Location = new System.Drawing.Point(0, 54);
+            this.lblAuthors.Location = new System.Drawing.Point(0, 67);
             this.lblAuthors.Margin = new System.Windows.Forms.Padding(3);
             this.lblAuthors.Name = "lblAuthors";
             this.lblAuthors.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
@@ -132,7 +134,7 @@
             // 
             this.lblGithub.AutoSize = true;
             this.lblGithub.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblGithub.Location = new System.Drawing.Point(0, 39);
+            this.lblGithub.Location = new System.Drawing.Point(0, 52);
             this.lblGithub.Name = "lblGithub";
             this.lblGithub.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
             this.lblGithub.Size = new System.Drawing.Size(228, 15);
@@ -140,6 +142,16 @@
             this.lblGithub.TabStop = true;
             this.lblGithub.Text = "https://github.com/TwelveBaud/RPA-Explorer";
             this.lblGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblGithub_LinkClicked);
+            // 
+            // lblCommit
+            // 
+            this.lblCommit.AutoSize = true;
+            this.lblCommit.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblCommit.Location = new System.Drawing.Point(0, 39);
+            this.lblCommit.Name = "lblCommit";
+            this.lblCommit.Size = new System.Drawing.Size(58, 13);
+            this.lblCommit.TabIndex = 5;
+            this.lblCommit.Text = "Commit {0}";
             // 
             // lblProductVersion
             // 
@@ -171,24 +183,24 @@
             tlpClose.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             tlpClose.Controls.Add(this.btnClose, 1, 0);
             tlpClose.Dock = System.Windows.Forms.DockStyle.Bottom;
-            tlpClose.Location = new System.Drawing.Point(0, 413);
+            tlpClose.Location = new System.Drawing.Point(0, 431);
             tlpClose.Name = "tlpClose";
             tlpClose.RowCount = 1;
             tlpClose.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tlpClose.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            tlpClose.Size = new System.Drawing.Size(418, 30);
+            tlpClose.Size = new System.Drawing.Size(434, 30);
             tlpClose.TabIndex = 1;
             // 
             // btnClose
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClose.Location = new System.Drawing.Point(169, 3);
+            this.btnClose.Location = new System.Drawing.Point(177, 3);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(79, 24);
             this.btnClose.TabIndex = 0;
+            this.btnClose.Text = global::RPA_Explorer.Lang.About_close;
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Text = Lang.About_close;
             // 
             // tabExtendedCredits
             // 
@@ -199,7 +211,7 @@
             tabExtendedCredits.Location = new System.Drawing.Point(0, 128);
             tabExtendedCredits.Name = "tabExtendedCredits";
             tabExtendedCredits.SelectedIndex = 0;
-            tabExtendedCredits.Size = new System.Drawing.Size(418, 285);
+            tabExtendedCredits.Size = new System.Drawing.Size(434, 303);
             tabExtendedCredits.TabIndex = 2;
             // 
             // tabTranslations
@@ -208,10 +220,10 @@
             this.tabTranslations.Location = new System.Drawing.Point(4, 22);
             this.tabTranslations.Name = "tabTranslations";
             this.tabTranslations.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTranslations.Size = new System.Drawing.Size(410, 259);
+            this.tabTranslations.Size = new System.Drawing.Size(426, 277);
             this.tabTranslations.TabIndex = 0;
+            this.tabTranslations.Text = global::RPA_Explorer.Lang.About_translations;
             this.tabTranslations.UseVisualStyleBackColor = true;
-            this.tabTranslations.Text = Lang.About_translations;
             // 
             // txtTranslations
             // 
@@ -220,7 +232,7 @@
             this.txtTranslations.Location = new System.Drawing.Point(3, 3);
             this.txtTranslations.Name = "txtTranslations";
             this.txtTranslations.ReadOnly = true;
-            this.txtTranslations.Size = new System.Drawing.Size(404, 253);
+            this.txtTranslations.Size = new System.Drawing.Size(420, 271);
             this.txtTranslations.TabIndex = 0;
             this.txtTranslations.Text = "";
             // 
@@ -230,10 +242,10 @@
             this.tabContributors.Location = new System.Drawing.Point(4, 22);
             this.tabContributors.Name = "tabContributors";
             this.tabContributors.Padding = new System.Windows.Forms.Padding(3);
-            this.tabContributors.Size = new System.Drawing.Size(410, 259);
+            this.tabContributors.Size = new System.Drawing.Size(426, 277);
             this.tabContributors.TabIndex = 1;
+            this.tabContributors.Text = global::RPA_Explorer.Lang.About_contributors;
             this.tabContributors.UseVisualStyleBackColor = true;
-            this.tabContributors.Text = Lang.About_contributors;
             // 
             // txtContributors
             // 
@@ -242,7 +254,7 @@
             this.txtContributors.Location = new System.Drawing.Point(3, 3);
             this.txtContributors.Name = "txtContributors";
             this.txtContributors.ReadOnly = true;
-            this.txtContributors.Size = new System.Drawing.Size(404, 253);
+            this.txtContributors.Size = new System.Drawing.Size(420, 271);
             this.txtContributors.TabIndex = 1;
             this.txtContributors.Text = "";
             // 
@@ -252,10 +264,10 @@
             this.tabDisclosures.Location = new System.Drawing.Point(4, 22);
             this.tabDisclosures.Name = "tabDisclosures";
             this.tabDisclosures.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDisclosures.Size = new System.Drawing.Size(410, 259);
+            this.tabDisclosures.Size = new System.Drawing.Size(426, 277);
             this.tabDisclosures.TabIndex = 2;
+            this.tabDisclosures.Text = global::RPA_Explorer.Lang.About_disclosures;
             this.tabDisclosures.UseVisualStyleBackColor = true;
-            this.tabDisclosures.Text = Lang.About_disclosures;
             // 
             // txtDisclosures
             // 
@@ -264,7 +276,7 @@
             this.txtDisclosures.Location = new System.Drawing.Point(3, 3);
             this.txtDisclosures.Name = "txtDisclosures";
             this.txtDisclosures.ReadOnly = true;
-            this.txtDisclosures.Size = new System.Drawing.Size(404, 253);
+            this.txtDisclosures.Size = new System.Drawing.Size(420, 271);
             this.txtDisclosures.TabIndex = 0;
             this.txtDisclosures.Text = "";
             // 
@@ -274,7 +286,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(418, 443);
+            this.ClientSize = new System.Drawing.Size(434, 461);
             this.ControlBox = false;
             this.Controls.Add(tabExtendedCredits);
             this.Controls.Add(tlpClose);
@@ -314,5 +326,6 @@
         private System.Windows.Forms.RichTextBox txtTranslations;
         private System.Windows.Forms.RichTextBox txtContributors;
         private System.Windows.Forms.RichTextBox txtDisclosures;
+        private System.Windows.Forms.Label lblCommit;
     }
 }

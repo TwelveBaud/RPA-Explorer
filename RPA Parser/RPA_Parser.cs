@@ -641,6 +641,7 @@ namespace RPA_Parser
 
             public override int Read(byte[] buffer, int offset, int count)
             {
+                if (tupleIndex >= entry.Tuples.Count) return 0;
                 int bytesRead = count;
                 if (inPrefix)
                 {
@@ -686,6 +687,11 @@ namespace RPA_Parser
                 tupleIndex = 0;
                 tuplePosition = 0;
                 inPrefix = true;
+                if(desiredPosition == entry.Length)
+                {
+                    tupleIndex = entry.Tuples.Count;
+                    return entry.Length;
+                }
                 while (entry.Tuples[tupleIndex].Length <= desiredPosition)
                 {
                     desiredPosition -= entry.Tuples[tupleIndex].Length; tupleIndex++;

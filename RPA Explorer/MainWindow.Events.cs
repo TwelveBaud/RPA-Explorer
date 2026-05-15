@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace RPA_Explorer
 {
-    internal partial class MainWindow
+    public partial class MainWindow
     {
         private void MainWindow_Load(object sender, EventArgs e)
         {

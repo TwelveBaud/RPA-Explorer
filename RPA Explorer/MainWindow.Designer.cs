@@ -1,6 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
-using Microsoft.WindowsAPICodePack.Dialogs.Controls;
-using RPA_Parser;
+﻿using RPA_Parser;
 using System;
 using System.ComponentModel;
 using System.Globalization;
@@ -10,7 +8,7 @@ using System.Windows.Forms;
 
 namespace RPA_Explorer
 {
-    internal partial class MainWindow
+    public partial class MainWindow
     {
         private ToolStripLabel mnulLanguage;
         private ToolStripComboBox cbxLanguage;
@@ -333,108 +331,6 @@ namespace RPA_Explorer
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
-
-        private CommonSaveFileDialog SetUpSaveDialog()
-        {
-            var initialDirectory = new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
-            var lastOpenedFilename = Settings.GetSetting("LastOpenedFile");
-            if (!string.IsNullOrWhiteSpace(lastOpenedFilename) && new FileInfo(lastOpenedFilename).Directory.Exists)
-                initialDirectory = new FileInfo(lastOpenedFilename).DirectoryName;
-
-            CommonSaveFileDialog dialog = new CommonSaveFileDialog()
-            {
-                Title = Lang.Save_RenPy_Archive,
-                InitialDirectory = initialDirectory,
-                OverwritePrompt = true,
-            };
-            dialog.Filters.Clear();
-            dialog.Filters.Add(new CommonFileDialogFilter(Lang.RPA_RPI_files, "*.rpa;*.rpi"));
-            dialog.AlwaysAppendDefaultExtension = true;
-            var grpVersion = new CommonFileDialogGroupBox(Lang.Archive_save_version);
-            var cbxVersion = new CommonFileDialogComboBox("cbxVersion");
-            cbxVersion.Items.Add(new CommonFileDialogComboBoxItem(RpaParser.Version.RPA_3_2.ToString()));
-            cbxVersion.Items.Add(new CommonFileDialogComboBoxItem(RpaParser.Version.RPA_3.ToString()));
-            cbxVersion.Items.Add(new CommonFileDialogComboBoxItem(RpaParser.Version.RPA_2.ToString()));
-            cbxVersion.Items.Add(new CommonFileDialogComboBoxItem(RpaParser.Version.RPA_1.ToString()));
-            switch (_rpaParser.ArchiveVersion)
-            {
-                case RpaParser.Version.RPA_3_2:
-                    cbxVersion.SelectedIndex = 0;
-                    break;
-                case RpaParser.Version.RPA_3:
-                    cbxVersion.SelectedIndex = 1;
-                    break;
-                case RpaParser.Version.RPA_2:
-                    cbxVersion.SelectedIndex = 2;
-                    break;
-                case RpaParser.Version.RPA_1:
-                    cbxVersion.SelectedIndex = 3;
-                    break;
-                default:
-                    cbxVersion.SelectedIndex = 1;
-                    break;
-            }
-            grpVersion.Items.Add(cbxVersion);
-            var grpPadding = new CommonFileDialogGroupBox(Lang.Archive_save_padding);
-            var txtPadding = new CommonFileDialogTextBox("txtPadding", "");
-            grpPadding.Items.Add(txtPadding);
-            var grpObfuscationKey = new CommonFileDialogGroupBox(Lang.Archive_save_obfuscationkey);
-            var txtObfuscationKey = new CommonFileDialogTextBox("txtObfuscationKey", "");
-            grpObfuscationKey.Items.Add(txtObfuscationKey);
-            void VersionChange(object sender, EventArgs e)
-            {
-                txtPadding.Enabled = cbxVersion.SelectedIndex < 3;
-                txtPadding.Text = txtPadding.Enabled ? "0x" + _rpaParser.Padding.ToString("X8") : "0x00000000";
-                txtObfuscationKey.Enabled = cbxVersion.SelectedIndex < 2;
-                txtObfuscationKey.Text = txtObfuscationKey.Enabled ? "0x" + _rpaParser.ObfuscationKey.ToString("X8") : "0x00000000";
-            }
-            VersionChange(cbxVersion, EventArgs.Empty);
-            cbxVersion.SelectedIndexChanged += VersionChange;
-            dialog.FileOk += (sender, e) =>
-            {
-                try
-                {
-                    double version;
-                    switch (cbxVersion.SelectedIndex)
-                    {
-                        case 0:
-                            version = RpaParser.Version.RPA_3_2;
-                            break;
-                        case 1:
-                            version = RpaParser.Version.RPA_3;
-                            break;
-                        case 2:
-                            version = RpaParser.Version.RPA_2;
-                            break;
-                        case 3:
-                            version = RpaParser.Version.RPA_1;
-                            break;
-                        default:
-                            version = RpaParser.Version.RPA_3_2;
-                            break;
-                    }
-                    _rpaParser.ArchiveVersion = _rpaParser.CheckSupportedVersion(version);
-                    if (txtPadding.Text.StartsWith("0x"))
-                        _rpaParser.Padding = int.Parse(txtPadding.Text.Substring(2), NumberStyles.HexNumber);
-                    else
-                        _rpaParser.Padding = int.Parse(txtPadding.Text, NumberStyles.Integer);
-                    if (txtObfuscationKey.Text.StartsWith("0x"))
-                        _rpaParser.ObfuscationKey = uint.Parse(txtObfuscationKey.Text.Substring(2), NumberStyles.HexNumber);
-                    else
-                        _rpaParser.ObfuscationKey = uint.Parse(txtObfuscationKey.Text, NumberStyles.Integer);
-                    _rpaParser.OptionsConfirmed = true; // No longer needed, but for completeness...
-                }
-                catch (Exception ex)
-                {
-                    e.Cancel = true;
-                    MessageBox.Show($"{ex.GetType().Name}: {ex.Message}", Lang.Invalid_values, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            };
-            dialog.Controls.Add(grpVersion);
-            dialog.Controls.Add(grpPadding);
-            dialog.Controls.Add(grpObfuscationKey);
-            return dialog;
         }
 
         private ToolStripMenuItem mnuiRegisterAssociation;

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace RPA_Explorer
 {
-    static class Program
+    public static class Program
     {
         /// <summary>
         ///  The main entry point for the application.
@@ -30,7 +30,8 @@ namespace RPA_Explorer
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow());
+            MainWindow = new MainWindow();
+            Application.Run(MainWindow);
         }
 
         static void InitializeLanguages()
@@ -62,8 +63,10 @@ namespace RPA_Explorer
             Languages = availableCultures;
         }
 
-        public static IList<CultureInfo> Languages;
-        public static IList<IPreviewer> Previewers;
-        public static StatusBarBroker StatusBar;
+        public static IList<CultureInfo> Languages { get; private set; }
+        public static IList<IPreviewer> Previewers { get; private set; }
+        public static StatusBarBroker StatusBar { get; internal set; }
+        public static string CurrentFile { get; internal set; }
+        public static MainWindow MainWindow { get; private set; }
     }
 }

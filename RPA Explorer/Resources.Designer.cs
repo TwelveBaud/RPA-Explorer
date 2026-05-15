@@ -22,7 +22,7 @@ namespace RPA_Explorer {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace RPA_Explorer {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RPA_Explorer.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace RPA_Explorer {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,9 +63,79 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap About_Logo {
+        public static System.Drawing.Bitmap About_Logo {
             get {
                 object obj = ResourceManager.GetObject("About.Logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BgBlack {
+            get {
+                object obj = ResourceManager.GetObject("BgBlack", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BgDark {
+            get {
+                object obj = ResourceManager.GetObject("BgDark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BgDarkImpl {
+            get {
+                object obj = ResourceManager.GetObject("BgDarkImpl", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BgGray {
+            get {
+                object obj = ResourceManager.GetObject("BgGray", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BgLight {
+            get {
+                object obj = ResourceManager.GetObject("BgLight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BgLightImpl {
+            get {
+                object obj = ResourceManager.GetObject("BgLightImpl", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BgWhite {
+            get {
+                object obj = ResourceManager.GetObject("BgWhite", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -79,7 +149,7 @@ namespace RPA_Explorer {
         ///\pard\b0 Copyright \&apos;a92022-2026 Martin Suchy, Andrew Cook\par
         ///This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, eithe [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string Disclosures {
+        public static string Disclosures {
             get {
                 return ResourceManager.GetString("Disclosures", resourceCulture);
             }
@@ -88,7 +158,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon MainWindow_Icon {
+        public static System.Drawing.Icon MainWindow_Icon {
             get {
                 object obj = ResourceManager.GetObject("MainWindow.Icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -98,7 +168,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap prvMedia_AudioBackdrop {
+        public static System.Drawing.Bitmap prvMedia_AudioBackdrop {
             get {
                 object obj = ResourceManager.GetObject("prvMedia.AudioBackdrop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -108,7 +178,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tvFileList_File {
+        public static System.Drawing.Bitmap tvFileList_File {
             get {
                 object obj = ResourceManager.GetObject("tvFileList.File", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -118,7 +188,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tvFileList_Folder {
+        public static System.Drawing.Bitmap tvFileList_Folder {
             get {
                 object obj = ResourceManager.GetObject("tvFileList.Folder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

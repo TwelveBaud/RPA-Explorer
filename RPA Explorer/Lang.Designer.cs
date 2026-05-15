@@ -22,7 +22,7 @@ namespace RPA_Explorer {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Lang {
+    public class Lang {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace RPA_Explorer {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RPA_Explorer.Lang", typeof(Lang).Assembly);
@@ -51,7 +51,7 @@ namespace RPA_Explorer {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Martin Suchy.
         /// </summary>
-        internal static string _Translator {
+        public static string _Translator {
             get {
                 return ResourceManager.GetString("!Translator", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
-        internal static string About {
+        public static string About {
             get {
                 return ResourceManager.GetString("About", resourceCulture);
             }
@@ -81,16 +81,25 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
-        internal static string About_close {
+        public static string About_close {
             get {
                 return ResourceManager.GetString("About_close", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Commit {0}.
+        /// </summary>
+        public static string About_commit {
+            get {
+                return ResourceManager.GetString("About_commit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contributors credits.
         /// </summary>
-        internal static string About_contributors {
+        public static string About_contributors {
             get {
                 return ResourceManager.GetString("About_contributors", resourceCulture);
             }
@@ -99,7 +108,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Created by Martin &quot;UniverseDevel&quot; Suchy.
         /// </summary>
-        internal static string About_creators {
+        public static string About_creators {
             get {
                 return ResourceManager.GetString("About_creators", resourceCulture);
             }
@@ -108,7 +117,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Disclosures.
         /// </summary>
-        internal static string About_disclosures {
+        public static string About_disclosures {
             get {
                 return ResourceManager.GetString("About_disclosures", resourceCulture);
             }
@@ -117,7 +126,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Inspired by rpatool and unrpyc..
         /// </summary>
-        internal static string About_inspiration {
+        public static string About_inspiration {
             get {
                 return ResourceManager.GetString("About_inspiration", resourceCulture);
             }
@@ -126,7 +135,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Translations credits.
         /// </summary>
-        internal static string About_translations {
+        public static string About_translations {
             get {
                 return ResourceManager.GetString("About_translations", resourceCulture);
             }
@@ -135,7 +144,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to version {0}.
         /// </summary>
-        internal static string About_version {
+        public static string About_version {
             get {
                 return ResourceManager.GetString("About_version", resourceCulture);
             }
@@ -144,7 +153,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive location: .
         /// </summary>
-        internal static string Archive_file_location {
+        public static string Archive_file_location {
             get {
                 return ResourceManager.GetString("Archive_file_location", resourceCulture);
             }
@@ -153,7 +162,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive size: .
         /// </summary>
-        internal static string Archive_file_size {
+        public static string Archive_file_size {
             get {
                 return ResourceManager.GetString("Archive_file_size", resourceCulture);
             }
@@ -162,7 +171,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive modified.
         /// </summary>
-        internal static string Archive_modified {
+        public static string Archive_modified {
             get {
                 return ResourceManager.GetString("Archive_modified", resourceCulture);
             }
@@ -171,7 +180,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive was modified, do you really want to exit without saving and lose changes?.
         /// </summary>
-        internal static string Archive_modified_close {
+        public static string Archive_modified_close {
             get {
                 return ResourceManager.GetString("Archive_modified_close", resourceCulture);
             }
@@ -180,7 +189,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive was modified, do you really want to load a new one and lose changes?.
         /// </summary>
-        internal static string Archive_modified_load {
+        public static string Archive_modified_load {
             get {
                 return ResourceManager.GetString("Archive_modified_load", resourceCulture);
             }
@@ -189,7 +198,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive was modified, do you really want to create a new one and lose changes?.
         /// </summary>
-        internal static string Archive_modified_new {
+        public static string Archive_modified_new {
             get {
                 return ResourceManager.GetString("Archive_modified_new", resourceCulture);
             }
@@ -198,7 +207,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
-        internal static string Archive_save_cancel {
+        public static string Archive_save_cancel {
             get {
                 return ResourceManager.GetString("Archive_save_cancel", resourceCulture);
             }
@@ -207,7 +216,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Continue.
         /// </summary>
-        internal static string Archive_save_continue {
+        public static string Archive_save_continue {
             get {
                 return ResourceManager.GetString("Archive_save_continue", resourceCulture);
             }
@@ -216,7 +225,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Obfuscation key:.
         /// </summary>
-        internal static string Archive_save_obfuscationkey {
+        public static string Archive_save_obfuscationkey {
             get {
                 return ResourceManager.GetString("Archive_save_obfuscationkey", resourceCulture);
             }
@@ -225,7 +234,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Data padding:.
         /// </summary>
-        internal static string Archive_save_padding {
+        public static string Archive_save_padding {
             get {
                 return ResourceManager.GetString("Archive_save_padding", resourceCulture);
             }
@@ -234,7 +243,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive options.
         /// </summary>
-        internal static string Archive_save_title {
+        public static string Archive_save_title {
             get {
                 return ResourceManager.GetString("Archive_save_title", resourceCulture);
             }
@@ -243,7 +252,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive version:.
         /// </summary>
-        internal static string Archive_save_version {
+        public static string Archive_save_version {
             get {
                 return ResourceManager.GetString("Archive_save_version", resourceCulture);
             }
@@ -252,7 +261,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive version: .
         /// </summary>
-        internal static string Archive_version {
+        public static string Archive_version {
             get {
                 return ResourceManager.GetString("Archive_version", resourceCulture);
             }
@@ -261,7 +270,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Cancel operation.
         /// </summary>
-        internal static string Cancel_operation {
+        public static string Cancel_operation {
             get {
                 return ResourceManager.GetString("Cancel_operation", resourceCulture);
             }
@@ -270,7 +279,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Checked files count: .
         /// </summary>
-        internal static string Checked_files_count {
+        public static string Checked_files_count {
             get {
                 return ResourceManager.GetString("Checked_files_count", resourceCulture);
             }
@@ -279,7 +288,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Checked files size: .
         /// </summary>
-        internal static string Checked_files_size {
+        public static string Checked_files_size {
             get {
                 return ResourceManager.GetString("Checked_files_size", resourceCulture);
             }
@@ -288,7 +297,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Create new archive.
         /// </summary>
-        internal static string Create_new_archive {
+        public static string Create_new_archive {
             get {
                 return ResourceManager.GetString("Create_new_archive", resourceCulture);
             }
@@ -297,7 +306,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Empty archive.
         /// </summary>
-        internal static string Empty_archive {
+        public static string Empty_archive {
             get {
                 return ResourceManager.GetString("Empty_archive", resourceCulture);
             }
@@ -306,7 +315,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive does not contain any files, cannot save empty archive..
         /// </summary>
-        internal static string Empty_archive_save {
+        public static string Empty_archive_save {
             get {
                 return ResourceManager.GetString("Empty_archive_save", resourceCulture);
             }
@@ -315,7 +324,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to RenPy Archive Explorer.
         /// </summary>
-        internal static string Explorer_title {
+        public static string Explorer_title {
             get {
                 return ResourceManager.GetString("Explorer_title", resourceCulture);
             }
@@ -324,7 +333,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Export checked.
         /// </summary>
-        internal static string Export_checked {
+        public static string Export_checked {
             get {
                 return ResourceManager.GetString("Export_checked", resourceCulture);
             }
@@ -333,7 +342,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Exporting file: .
         /// </summary>
-        internal static string Exporting_file {
+        public static string Exporting_file {
             get {
                 return ResourceManager.GetString("Exporting_file", resourceCulture);
             }
@@ -342,7 +351,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Associate RPA/RPI extensions.
         /// </summary>
-        internal static string File_association {
+        public static string File_association {
             get {
                 return ResourceManager.GetString("File_association", resourceCulture);
             }
@@ -351,7 +360,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to File exists in archive.
         /// </summary>
-        internal static string File_exists {
+        public static string File_exists {
             get {
                 return ResourceManager.GetString("File_exists", resourceCulture);
             }
@@ -360,7 +369,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to File list:.
         /// </summary>
-        internal static string File_list {
+        public static string File_list {
             get {
                 return ResourceManager.GetString("File_list", resourceCulture);
             }
@@ -369,7 +378,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Files count: .
         /// </summary>
-        internal static string Files_count {
+        public static string Files_count {
             get {
                 return ResourceManager.GetString("Files_count", resourceCulture);
             }
@@ -378,7 +387,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Image.
         /// </summary>
-        internal static string Image {
+        public static string Image {
             get {
                 return ResourceManager.GetString("Image", resourceCulture);
             }
@@ -387,7 +396,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Index file location: .
         /// </summary>
-        internal static string Index_file_location {
+        public static string Index_file_location {
             get {
                 return ResourceManager.GetString("Index_file_location", resourceCulture);
             }
@@ -396,7 +405,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Index file size: .
         /// </summary>
-        internal static string Index_file_size {
+        public static string Index_file_size {
             get {
                 return ResourceManager.GetString("Index_file_size", resourceCulture);
             }
@@ -405,7 +414,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Invalid values.
         /// </summary>
-        internal static string Invalid_values {
+        public static string Invalid_values {
             get {
                 return ResourceManager.GetString("Invalid_values", resourceCulture);
             }
@@ -414,7 +423,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Langauge:.
         /// </summary>
-        internal static string Language {
+        public static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
             }
@@ -423,7 +432,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Archive loading failed.
         /// </summary>
-        internal static string Load_failed {
+        public static string Load_failed {
             get {
                 return ResourceManager.GetString("Load_failed", resourceCulture);
             }
@@ -432,7 +441,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Loading archive failed with following error: {0}.
         /// </summary>
-        internal static string Load_failed_reason {
+        public static string Load_failed_reason {
             get {
                 return ResourceManager.GetString("Load_failed_reason", resourceCulture);
             }
@@ -441,7 +450,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Load file.
         /// </summary>
-        internal static string Load_file {
+        public static string Load_file {
             get {
                 return ResourceManager.GetString("Load_file", resourceCulture);
             }
@@ -450,7 +459,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Load RenPy Archive.
         /// </summary>
-        internal static string Load_RenPy_Archive {
+        public static string Load_RenPy_Archive {
             get {
                 return ResourceManager.GetString("Load_RenPy_Archive", resourceCulture);
             }
@@ -459,7 +468,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Loading additional previewers....
         /// </summary>
-        internal static string Loading_additional_previewers {
+        public static string Loading_additional_previewers {
             get {
                 return ResourceManager.GetString("Loading_additional_previewers", resourceCulture);
             }
@@ -468,61 +477,96 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Loading file: .
         /// </summary>
-        internal static string Loading_file {
+        public static string Loading_file {
             get {
                 return ResourceManager.GetString("Loading_file", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Define Python 2.7 location.
-        /// </summary>
-        internal static string Locate_python {
-            get {
-                return ResourceManager.GetString("Locate_python", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Locate Python interpreter.
-        /// </summary>
-        internal static string Locate_Python_Interpreter {
-            get {
-                return ResourceManager.GetString("Locate_Python_Interpreter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Define unrpyc location.
-        /// </summary>
-        internal static string Locate_unrpyc {
-            get {
-                return ResourceManager.GetString("Locate_unrpyc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Locate unrpyc script.
-        /// </summary>
-        internal static string Locate_unrpyc_script {
-            get {
-                return ResourceManager.GetString("Locate_unrpyc_script", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Media.
         /// </summary>
-        internal static string Media {
+        public static string Media {
             get {
                 return ResourceManager.GetString("Media", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        public static string MediaStub_Download {
+            get {
+                return ResourceManager.GetString("MediaStub_Download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking for media support files.
+        /// </summary>
+        public static string MediaStub_Download_checking {
+            get {
+                return ResourceManager.GetString("MediaStub_Download_checking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previewing media has been separated into a support package in this version of RPA Explorer.
+        ///This saved 100MB off the initial download and 10-30 seconds off each startup.
+        ///
+        ///To preview this file, you&apos;ll need to download that support package and add its files to RPA Explorer.
+        ///Check the &quot;Releases&quot; section of GitHub (link in the About screen) or use the button below.
+        ///
+        ///RPA Explorer will need to be restarted for this to take effect..
+        /// </summary>
+        public static string MediaStub_Download_explained {
+            get {
+                return ResourceManager.GetString("MediaStub_Download_explained", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download required.
+        /// </summary>
+        public static string MediaStub_Download_required {
+            get {
+                return ResourceManager.GetString("MediaStub_Download_required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading {0}.
+        /// </summary>
+        public static string MediaStub_Downloading_file {
+            get {
+                return ResourceManager.GetString("MediaStub_Downloading_file", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extracting media support files.
+        /// </summary>
+        public static string MediaStub_Extracting {
+            get {
+                return ResourceManager.GetString("MediaStub_Extracting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The media support package has been successfully extracted.
+        ///
+        ///Please restart RPA Explorer for it to take effect..
+        /// </summary>
+        public static string MediaStub_Restart_required {
+            get {
+                return ResourceManager.GetString("MediaStub_Restart_required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
-        internal static string None {
+        public static string None {
             get {
                 return ResourceManager.GetString("None", resourceCulture);
             }
@@ -531,7 +575,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Selected file is not valid archive file..
         /// </summary>
-        internal static string Not_valid_archive_file {
+        public static string Not_valid_archive_file {
             get {
                 return ResourceManager.GetString("Not_valid_archive_file", resourceCulture);
             }
@@ -540,16 +584,43 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Options.
         /// </summary>
-        internal static string Options {
+        public static string Options {
             get {
                 return ResourceManager.GetString("Options", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The quick brown fox jumps over the lazy dog..
+        /// </summary>
+        public static string Pangram_0 {
+            get {
+                return ResourceManager.GetString("Pangram_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jackdaws love my big sphinx of quartz..
+        /// </summary>
+        public static string Pangram_1 {
+            get {
+                return ResourceManager.GetString("Pangram_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The five boxing wizards jump quickly..
+        /// </summary>
+        public static string Pangram_2 {
+            get {
+                return ResourceManager.GetString("Pangram_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pause.
         /// </summary>
-        internal static string Pause {
+        public static string Pause {
             get {
                 return ResourceManager.GetString("Pause", resourceCulture);
             }
@@ -558,7 +629,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Play.
         /// </summary>
-        internal static string Play {
+        public static string Play {
             get {
                 return ResourceManager.GetString("Play", resourceCulture);
             }
@@ -567,7 +638,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Preview load failed.
         /// </summary>
-        internal static string Preview_failed {
+        public static string Preview_failed {
             get {
                 return ResourceManager.GetString("Preview_failed", resourceCulture);
             }
@@ -576,7 +647,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Loading preview failed with following error: {0}.
         /// </summary>
-        internal static string Preview_failed_reason {
+        public static string Preview_failed_reason {
             get {
                 return ResourceManager.GetString("Preview_failed_reason", resourceCulture);
             }
@@ -585,7 +656,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Loading preview failed with error: {0} Use &apos;Options&apos; to define external locations for this preview..
         /// </summary>
-        internal static string Preview_failed_reason_hint {
+        public static string Preview_failed_reason_hint {
             get {
                 return ResourceManager.GetString("Preview_failed_reason_hint", resourceCulture);
             }
@@ -594,7 +665,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Preview is not supported for selected file/folder..
         /// </summary>
-        internal static string Preview_is_not_supported {
+        public static string Preview_is_not_supported {
             get {
                 return ResourceManager.GetString("Preview_is_not_supported", resourceCulture);
             }
@@ -603,7 +674,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Python interpreter.
         /// </summary>
-        internal static string Python_interpreter {
+        public static string Python_interpreter {
             get {
                 return ResourceManager.GetString("Python_interpreter", resourceCulture);
             }
@@ -612,7 +683,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Ready.
         /// </summary>
-        internal static string Ready {
+        public static string Ready {
             get {
                 return ResourceManager.GetString("Ready", resourceCulture);
             }
@@ -621,7 +692,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Remove checked.
         /// </summary>
-        internal static string Remove_checked {
+        public static string Remove_checked {
             get {
                 return ResourceManager.GetString("Remove_checked", resourceCulture);
             }
@@ -630,7 +701,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to File &apos;{0}&apos; exists in archive, do you want to replace it?.
         /// </summary>
-        internal static string Replace_file {
+        public static string Replace_file {
             get {
                 return ResourceManager.GetString("Replace_file", resourceCulture);
             }
@@ -639,7 +710,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to RPA/RPI files.
         /// </summary>
-        internal static string RPA_RPI_files {
+        public static string RPA_RPI_files {
             get {
                 return ResourceManager.GetString("RPA_RPI_files", resourceCulture);
             }
@@ -648,7 +719,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Save archive.
         /// </summary>
-        internal static string Save_archive {
+        public static string Save_archive {
             get {
                 return ResourceManager.GetString("Save_archive", resourceCulture);
             }
@@ -657,7 +728,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Save failed.
         /// </summary>
-        internal static string Save_failed {
+        public static string Save_failed {
             get {
                 return ResourceManager.GetString("Save_failed", resourceCulture);
             }
@@ -666,7 +737,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Saving new archive failed with following error: {0}.
         /// </summary>
-        internal static string Save_failed_reason {
+        public static string Save_failed_reason {
             get {
                 return ResourceManager.GetString("Save_failed_reason", resourceCulture);
             }
@@ -675,7 +746,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Save RenPy Archive.
         /// </summary>
-        internal static string Save_RenPy_Archive {
+        public static string Save_RenPy_Archive {
             get {
                 return ResourceManager.GetString("Save_RenPy_Archive", resourceCulture);
             }
@@ -684,7 +755,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Saving archive....
         /// </summary>
-        internal static string Saving_archive {
+        public static string Saving_archive {
             get {
                 return ResourceManager.GetString("Saving_archive", resourceCulture);
             }
@@ -693,7 +764,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
-        internal static string Search {
+        public static string Search {
             get {
                 return ResourceManager.GetString("Search", resourceCulture);
             }
@@ -702,7 +773,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Search next.
         /// </summary>
-        internal static string Search_next {
+        public static string Search_next {
             get {
                 return ResourceManager.GetString("Search_next", resourceCulture);
             }
@@ -711,7 +782,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Selected file path: .
         /// </summary>
-        internal static string Selected_file_path {
+        public static string Selected_file_path {
             get {
                 return ResourceManager.GetString("Selected_file_path", resourceCulture);
             }
@@ -720,7 +791,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Selected file size: .
         /// </summary>
-        internal static string Selected_file_size {
+        public static string Selected_file_size {
             get {
                 return ResourceManager.GetString("Selected_file_size", resourceCulture);
             }
@@ -729,7 +800,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Text.
         /// </summary>
-        internal static string Text {
+        public static string Text {
             get {
                 return ResourceManager.GetString("Text", resourceCulture);
             }
@@ -738,7 +809,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to unrpyc script.
         /// </summary>
-        internal static string UNRPYC_script {
+        public static string UNRPYC_script {
             get {
                 return ResourceManager.GetString("UNRPYC_script", resourceCulture);
             }
@@ -747,7 +818,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Unsaved files count: .
         /// </summary>
-        internal static string Unsaved_files_count {
+        public static string Unsaved_files_count {
             get {
                 return ResourceManager.GetString("Unsaved_files_count", resourceCulture);
             }
@@ -756,7 +827,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Choose file from file list on the side to preview contents. Check and export to save it locally or delete it from archive. Drag and drop files to file list to add new files into archive..
         /// </summary>
-        internal static string Usage_instructions_loaded {
+        public static string Usage_instructions_loaded {
             get {
                 return ResourceManager.GetString("Usage_instructions_loaded", resourceCulture);
             }
@@ -765,7 +836,7 @@ namespace RPA_Explorer {
         /// <summary>
         ///   Looks up a localized string similar to Start by creating/loading archive file or drag and drop archive file into this area to load it..
         /// </summary>
-        internal static string Usage_instructions_new {
+        public static string Usage_instructions_new {
             get {
                 return ResourceManager.GetString("Usage_instructions_new", resourceCulture);
             }

@@ -1,4 +1,7 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿#if !MINIMAL
+using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.WindowsAPICodePack.Dialogs.Controls;
+#endif
 using NeoSmart.PrettySize;
 using RPA_Explorer.Previewers;
 using RPA_Parser;
@@ -15,13 +18,15 @@ using System.Windows.Forms;
 
 namespace RPA_Explorer
 {
-    internal partial class MainWindow : Form
+    public partial class MainWindow : Form
     {
 
         private RpaParser _rpaParser;
         private bool _dirty;
 
-        public MainWindow()
+        public Panel PreviewPanel => pnlPreview;
+
+        internal MainWindow()
         {
             InitializeComponent();
 
@@ -238,6 +243,7 @@ namespace RPA_Explorer
                 else
                 {
                     Settings.SetSetting("LastOpenedFile", filename, typeof(MainWindow));
+                    Program.CurrentFile = filename;
                     this._rpaParser = e.Result as RpaParser;
                     _dirty = false;
 
@@ -258,8 +264,8 @@ namespace RPA_Explorer
                 MessageBox.Show(Lang.Empty_archive_save, Lang.Empty_archive, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            using CommonSaveFileDialog dialog = SetUpSaveDialog();
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
+            using var dialog = SetUpSaveDialog();
+            if ((int?)dialog?.ShowDialog() != 1)
             {
                 return;
             }
@@ -487,11 +493,11 @@ namespace RPA_Explorer
             source.Seek(0, SeekOrigin.Begin);
             foreach (var previewer in Program.Previewers)
             {
-                if (previewer.CanPreview(NormalizeTreePath(tvFileList.SelectedNode.FullPath), magic))
+                if (previewer.CanPreview(NormalizeTreePath(tvFileList.SelectedNode.FullPath).ToLowerInvariant(), magic))
                 {
                     try
                     {
-                        var control = previewer.Preview(NormalizeTreePath(tvFileList.SelectedNode.FullPath), source);
+                        var control = previewer.Preview(NormalizeTreePath(tvFileList.SelectedNode.FullPath).ToLowerInvariant(), source);
                         if (control == null)
                         {
                             source.Dispose();
@@ -560,6 +566,241 @@ namespace RPA_Explorer
             // Tree view shouldn't be manipulated while a load/save/export is in progress
             tvFileList.Enabled = !(ioOperation?.IsBusy ?? false);
         }
+
+#if MINIMAL
+        private SaveFileDialog SetUpSaveDialog()
+        {
+            var initialDirectory = new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
+            var lastOpenedFilename = Settings.GetSetting("LastOpenedFile");
+            if (!string.IsNullOrWhiteSpace(lastOpenedFilename) && new FileInfo(lastOpenedFilename).Directory.Exists)
+                initialDirectory = new FileInfo(lastOpenedFilename).DirectoryName;
+
+            var btnOptionsAccept = new Button
+            {
+                Text = Lang.Archive_save_continue,
+                Dock = DockStyle.Fill,
+                Margin = new Padding(3)
+            };
+            var btnOptionsCancel = new Button
+            {
+                Text = Lang.Archive_save_cancel,
+                DialogResult = DialogResult.Cancel,
+                Dock = DockStyle.Fill,
+                Margin = new Padding(3)
+            };
+            var cbxVersion = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Dock = DockStyle.Fill,
+                Margin = new Padding(3)
+            };
+            cbxVersion.Items.Add(RpaParser.Version.RPA_3_2);
+            cbxVersion.Items.Add(RpaParser.Version.RPA_3);
+            cbxVersion.Items.Add(RpaParser.Version.RPA_2);
+            cbxVersion.Items.Add(RpaParser.Version.RPA_1);
+            if (cbxVersion.Items.Contains(_rpaParser.ArchiveVersion)) cbxVersion.SelectedItem = _rpaParser.ArchiveVersion;
+            else cbxVersion.SelectedItem = RpaParser.Version.RPA_3;
+            var txtPadding = new TextBox
+            {
+                Dock = DockStyle.Fill,
+                Margin = new Padding(3)
+            };
+            var txtObfuscationKey = new TextBox
+            {
+                Dock = DockStyle.Fill,
+                Margin = new Padding(3)
+            };
+            void VersionChange(object sender, EventArgs e)
+            {
+                txtPadding.Enabled = cbxVersion.SelectedIndex < 3;
+                txtPadding.Text = txtPadding.Enabled ? "0x" + _rpaParser.Padding.ToString("X8") : "0x00000000";
+                txtObfuscationKey.Enabled = cbxVersion.SelectedIndex < 2;
+                txtObfuscationKey.Text = txtObfuscationKey.Enabled ? "0x" + _rpaParser.ObfuscationKey.ToString("X8") : "0x00000000";
+            }
+            VersionChange(cbxVersion, EventArgs.Empty);
+            cbxVersion.SelectedIndexChanged += VersionChange;
+            var pnlOptionsLayout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                Margin = new Padding(12)
+            };
+            pnlOptionsLayout.RowStyles.Clear();
+            for (int i = 0; i < 4; i++) pnlOptionsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 26));
+            pnlOptionsLayout.ColumnStyles.Clear();
+            for (int i = 0; i < 2; i++) pnlOptionsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+            pnlOptionsLayout.Controls.Add(new Label
+            {
+                Text = Lang.Archive_save_version,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
+                Dock = DockStyle.Fill,
+            }, 0, 0);
+            pnlOptionsLayout.Controls.Add(cbxVersion, 1, 0);
+            pnlOptionsLayout.Controls.Add(new Label
+            {
+                Text = Lang.Archive_save_padding,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
+                Dock = DockStyle.Fill,
+            }, 0, 1);
+            pnlOptionsLayout.Controls.Add(txtPadding, 1, 1);
+            pnlOptionsLayout.Controls.Add(new Label
+            {
+                Text = Lang.Archive_save_obfuscationkey,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
+                Dock = DockStyle.Fill,
+            }, 0, 2);
+            pnlOptionsLayout.Controls.Add(txtObfuscationKey, 1, 2);
+            pnlOptionsLayout.Controls.Add(btnOptionsAccept, 0, 3);
+            pnlOptionsLayout.Controls.Add(btnOptionsCancel, 1, 3);
+            using var optionsDialog = new Form()
+            {
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MinimizeBox = false,
+                MaximizeBox = false,
+                ControlBox = false,
+                ShowInTaskbar = false,
+                StartPosition = FormStartPosition.CenterParent,
+                Text = Lang.Archive_save_title,
+                Width = 360,
+                Height = 146,
+                AcceptButton = btnOptionsAccept,
+                CancelButton = btnOptionsCancel,
+            };
+            optionsDialog.Controls.Add(pnlOptionsLayout);
+            btnOptionsAccept.Click += (s, e) =>
+            {
+                try
+                {
+                    _rpaParser.ArchiveVersion = _rpaParser.CheckSupportedVersion((double)cbxVersion.SelectedItem);
+                    if (txtPadding.Text.StartsWith("0x"))
+                        _rpaParser.Padding = int.Parse(txtPadding.Text.Substring(2), NumberStyles.HexNumber);
+                    else
+                        _rpaParser.Padding = int.Parse(txtPadding.Text, NumberStyles.Integer);
+                    if (txtObfuscationKey.Text.StartsWith("0x"))
+                        _rpaParser.ObfuscationKey = uint.Parse(txtObfuscationKey.Text.Substring(2), NumberStyles.HexNumber);
+                    else
+                        _rpaParser.ObfuscationKey = uint.Parse(txtObfuscationKey.Text, NumberStyles.Integer);
+                    _rpaParser.OptionsConfirmed = true; // No longer needed, but for completeness...
+                    optionsDialog.DialogResult = DialogResult.OK;
+                    optionsDialog.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"{ex.GetType().Name}: {ex.Message}", Lang.Invalid_values, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            };
+            if (optionsDialog.ShowDialog() != DialogResult.OK) return null;
+            return new SaveFileDialog
+            {
+                Title = Lang.Save_RenPy_Archive,
+                Filter = Lang.RPA_RPI_files + " (*.rpa,*.rpi)|*.rpa;*.rpi",
+                InitialDirectory = initialDirectory,
+                CheckFileExists = false,
+                CheckPathExists = true,
+            };
+        }
+#else
+        private CommonSaveFileDialog SetUpSaveDialog()
+        {
+            var initialDirectory = new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
+            var lastOpenedFilename = Settings.GetSetting("LastOpenedFile");
+            if (!string.IsNullOrWhiteSpace(lastOpenedFilename) && new FileInfo(lastOpenedFilename).Directory.Exists)
+                initialDirectory = new FileInfo(lastOpenedFilename).DirectoryName;
+
+            CommonSaveFileDialog dialog = new CommonSaveFileDialog()
+            {
+                Title = Lang.Save_RenPy_Archive,
+                InitialDirectory = initialDirectory,
+                OverwritePrompt = true,
+            };
+            dialog.Filters.Clear();
+            dialog.Filters.Add(new CommonFileDialogFilter(Lang.RPA_RPI_files, "*.rpa;*.rpi"));
+            dialog.AlwaysAppendDefaultExtension = true;
+            var grpVersion = new CommonFileDialogGroupBox(Lang.Archive_save_version);
+            var cbxVersion = new CommonFileDialogComboBox("cbxVersion");
+            cbxVersion.Items.Add(new CommonFileDialogComboBoxItem(RpaParser.Version.RPA_3_2.ToString()));
+            cbxVersion.Items.Add(new CommonFileDialogComboBoxItem(RpaParser.Version.RPA_3.ToString()));
+            cbxVersion.Items.Add(new CommonFileDialogComboBoxItem(RpaParser.Version.RPA_2.ToString()));
+            cbxVersion.Items.Add(new CommonFileDialogComboBoxItem(RpaParser.Version.RPA_1.ToString()));
+            switch (_rpaParser.ArchiveVersion)
+            {
+                case RpaParser.Version.RPA_3_2:
+                    cbxVersion.SelectedIndex = 0;
+                    break;
+                case RpaParser.Version.RPA_3:
+                    cbxVersion.SelectedIndex = 1;
+                    break;
+                case RpaParser.Version.RPA_2:
+                    cbxVersion.SelectedIndex = 2;
+                    break;
+                case RpaParser.Version.RPA_1:
+                    cbxVersion.SelectedIndex = 3;
+                    break;
+                default:
+                    cbxVersion.SelectedIndex = 1;
+                    break;
+            }
+            grpVersion.Items.Add(cbxVersion);
+            var grpPadding = new CommonFileDialogGroupBox(Lang.Archive_save_padding);
+            var txtPadding = new CommonFileDialogTextBox("txtPadding", "");
+            grpPadding.Items.Add(txtPadding);
+            var grpObfuscationKey = new CommonFileDialogGroupBox(Lang.Archive_save_obfuscationkey);
+            var txtObfuscationKey = new CommonFileDialogTextBox("txtObfuscationKey", "");
+            grpObfuscationKey.Items.Add(txtObfuscationKey);
+            void VersionChange(object sender, EventArgs e)
+            {
+                txtPadding.Enabled = cbxVersion.SelectedIndex < 3;
+                txtPadding.Text = txtPadding.Enabled ? "0x" + _rpaParser.Padding.ToString("X8") : "0x00000000";
+                txtObfuscationKey.Enabled = cbxVersion.SelectedIndex < 2;
+                txtObfuscationKey.Text = txtObfuscationKey.Enabled ? "0x" + _rpaParser.ObfuscationKey.ToString("X8") : "0x00000000";
+            }
+            VersionChange(cbxVersion, EventArgs.Empty);
+            cbxVersion.SelectedIndexChanged += VersionChange;
+            dialog.FileOk += (sender, e) =>
+            {
+                try
+                {
+                    double version;
+                    switch (cbxVersion.SelectedIndex)
+                    {
+                        case 0:
+                            version = RpaParser.Version.RPA_3_2;
+                            break;
+                        case 1:
+                            version = RpaParser.Version.RPA_3;
+                            break;
+                        case 2:
+                            version = RpaParser.Version.RPA_2;
+                            break;
+                        case 3:
+                            version = RpaParser.Version.RPA_1;
+                            break;
+                        default:
+                            version = RpaParser.Version.RPA_3_2;
+                            break;
+                    }
+                    _rpaParser.ArchiveVersion = _rpaParser.CheckSupportedVersion(version);
+                    if (txtPadding.Text.StartsWith("0x"))
+                        _rpaParser.Padding = int.Parse(txtPadding.Text.Substring(2), NumberStyles.HexNumber);
+                    else
+                        _rpaParser.Padding = int.Parse(txtPadding.Text, NumberStyles.Integer);
+                    if (txtObfuscationKey.Text.StartsWith("0x"))
+                        _rpaParser.ObfuscationKey = uint.Parse(txtObfuscationKey.Text.Substring(2), NumberStyles.HexNumber);
+                    else
+                        _rpaParser.ObfuscationKey = uint.Parse(txtObfuscationKey.Text, NumberStyles.Integer);
+                    _rpaParser.OptionsConfirmed = true; // No longer needed, but for completeness...
+                }
+                catch (Exception ex)
+                {
+                    e.Cancel = true;
+                    MessageBox.Show($"{ex.GetType().Name}: {ex.Message}", Lang.Invalid_values, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            };
+            dialog.Controls.Add(grpVersion);
+            dialog.Controls.Add(grpPadding);
+            dialog.Controls.Add(grpObfuscationKey);
+            return dialog;
+        }
+#endif
     }
 
     public static class Extensions

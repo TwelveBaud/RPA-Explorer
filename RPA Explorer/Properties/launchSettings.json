@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "RPA Explorer": {
+      "commandName": "Project"
+    },
+    "RPA  Explorer (Exotic Images)": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Andrew\\Source\\Repos\\RPA-Explorer\\ExoticImages.previewer\\bin\\x64\\Debug\\net481\\RPA Explorer.exe",
+      "workingDirectory": "C:\\Users\\Andrew\\Source\\Repos\\RPA-Explorer\\ExoticImages.previewer\\bin\\x64\\Debug\\net481\\"
+    },
+    "RPA Explorer (Media)": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Andrew\\Source\\Repos\\RPA-Explorer\\Media.previewer\\bin\\x64\\Debug\\net481\\RPA Explorer.exe",
+      "workingDirectory": "C:\\Users\\Andrew\\Source\\Repos\\RPA-Explorer\\Media.previewer\\bin\\x64\\Debug\\net481"
+    },
+    "RPA Explorer (Code)": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Andrew\\Source\\Repos\\RPA-Explorer\\Code.previewer\\bin\\x64\\Debug\\net481\\RPA Explorer.exe",
+      "workingDirectory": "C:\\Users\\Andrew\\Source\\Repos\\RPA-Explorer\\Code.previewer\\bin\\x64\\Debug\\net481\\"
+    }
+  }
+}

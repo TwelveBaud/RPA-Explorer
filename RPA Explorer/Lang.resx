@@ -297,20 +297,8 @@
   <data name="UNRPYC_script" xml:space="preserve">
     <value>unrpyc script</value>
   </data>
-  <data name="Locate_unrpyc_script" xml:space="preserve">
-    <value>Locate unrpyc script</value>
-  </data>
   <data name="Python_interpreter" xml:space="preserve">
     <value>Python interpreter</value>
-  </data>
-  <data name="Locate_Python_Interpreter" xml:space="preserve">
-    <value>Locate Python interpreter</value>
-  </data>
-  <data name="Locate_unrpyc" xml:space="preserve">
-    <value>Define unrpyc location</value>
-  </data>
-  <data name="Locate_python" xml:space="preserve">
-    <value>Define Python 2.7 location</value>
   </data>
   <data name="Preview_failed" xml:space="preserve">
     <value>Preview load failed</value>
@@ -353,5 +341,46 @@
   </data>
   <data name="Loading_additional_previewers" xml:space="preserve">
     <value>Loading additional previewers...</value>
+  </data>
+  <data name="Pangram_0" xml:space="preserve">
+    <value>The quick brown fox jumps over the lazy dog.</value>
+  </data>
+  <data name="Pangram_1" xml:space="preserve">
+    <value>Jackdaws love my big sphinx of quartz.</value>
+  </data>
+  <data name="Pangram_2" xml:space="preserve">
+    <value>The five boxing wizards jump quickly.</value>
+  </data>
+  <data name="MediaStub_Download_required" xml:space="preserve">
+    <value>Download required</value>
+  </data>
+  <data name="MediaStub_Download_explained" xml:space="preserve">
+    <value>Previewing media has been separated into a support package in this version of RPA Explorer.
+This saved 100MB off the initial download and 10-30 seconds off each startup.
+
+To preview this file, you'll need to download that support package and add its files to RPA Explorer.
+Check the "Releases" section of GitHub (link in the About screen) or use the button below.
+
+RPA Explorer will need to be restarted for this to take effect.</value>
+  </data>
+  <data name="MediaStub_Download_checking" xml:space="preserve">
+    <value>Checking for media support files</value>
+  </data>
+  <data name="MediaStub_Downloading_file" xml:space="preserve">
+    <value>Downloading {0}</value>
+  </data>
+  <data name="MediaStub_Extracting" xml:space="preserve">
+    <value>Extracting media support files</value>
+  </data>
+  <data name="MediaStub_Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="MediaStub_Restart_required" xml:space="preserve">
+    <value>The media support package has been successfully extracted.
+
+Please restart RPA Explorer for it to take effect.</value>
+  </data>
+  <data name="About_commit" xml:space="preserve">
+    <value>Commit {0}</value>
   </data>
 </root>
