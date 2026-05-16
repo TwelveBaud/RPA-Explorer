@@ -1,22 +1,19 @@
+using Ionic.Zlib;
+using Razorvine.Pickle;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Ionic.Zlib;
-using Microsoft.Win32;
-using Razorvine.Pickle;
-using WebPWrapper;
 
 namespace RPA_Parser
 {
     // Inspired by: https://github.com/Shizmob/rpatool
-    // Inspired by: https://github.com/CensoredUsername/unrpyc
-    
+
     public class RpaParser
     {
         public class Version
@@ -27,7 +24,7 @@ namespace RPA_Parser
             public const double RPA_3 = 3;
             public const double RPA_3_2 = 3.2;
         }
-        
+
         private class ArchiveMagic
         {
             public const string RPA_1_RPA = ".rpa";
@@ -36,11 +33,6 @@ namespace RPA_Parser
             public const string RPA_3 = "RPA-3.0 ";
             public const string RPA_3_2 = "RPA-3.2 ";
         }
-        
-        private class RPCMagic
-        {
-            public const string RPC_2 = "RENPY RPC2";
-        }
 
         public FileInfo ArchiveInfo;
         public FileInfo IndexInfo;
@@ -48,11 +40,8 @@ namespace RPA_Parser
         public int Padding = 0;
         public long ObfuscationKey = 0xDEADBEEF;
         public bool OptionsConfirmed = false;
-        public SortedDictionary<string,ArchiveIndex> Index = new ();
+        public SortedDictionary<string, ArchiveIndex> Index = new SortedDictionary<string, ArchiveIndex>();
 
-        public string PythonLocation = GetPythonPath("2.7", "2.7");
-        public string UnrpycLocation = String.Empty;
-        
         private long _offset;
         private string _archivePath;
         private string _indexPath;
@@ -65,186 +54,15 @@ namespace RPA_Parser
             public long Length;
             public byte[] Prefix;
         }
-        
+
         public class ArchiveIndex
         {
-            public readonly SortedDictionary<int, Tuples> Tuples = new ();
+            public readonly SortedDictionary<int, Tuples> Tuples = new SortedDictionary<int, Tuples>();
             public string FullPath = String.Empty;
             public string TreePath = String.Empty;
             public string ParentPath = String.Empty;
             public bool InArchive;
             public long Length;
-        }
-
-        public class PreviewTypes
-        {
-            public const string Unknown = "unknown";
-            public const string Image = "image";
-            public const string Text = "text";
-            public const string Video = "video";
-            public const string Audio = "audio";
-        }
-        
-        /*
-        RenPy Supports:
-        Images: JPEG/JPG, PNG, WEBP, BMP, GIF
-        Sound/Music: OPUS, OGG Vorbis, FLAC, WAV, MP3, MP2
-        Movies: WEBM, OGG Theora, VP9, VP8, MPEG 41, MPEG 2, MPEG 1
-        */
-
-        public readonly string[] ImageExtList = {
-            ".jpeg",
-            ".jpg",
-            ".bmp",
-            ".tiff",
-            ".png",
-            ".webp",
-            ".exif",
-            ".ico",
-            ".gif"
-        };
-
-        public readonly string[] AudioExtList = {
-            ".aac",
-            ".ac3",
-            ".flac",
-            ".mp3",
-            ".wma",
-            ".wav",
-            ".ogg",
-            ".cpc"
-        };
-
-        public readonly string[] VideoExtList = {
-            ".3gp",
-            ".flv",
-            ".mov",
-            ".mp4",
-            ".ogv",
-            ".swf",
-            ".mpg",
-            ".mpeg",
-            ".avi",
-            ".mkv",
-            ".wmv",
-            ".webm"
-        };
-
-        public readonly string[] TextExtList = {
-            ".py",
-            ".rpy~",
-            ".rpy",
-            ".txt",
-            ".log",
-            ".nfo",
-            ".htm",
-            ".html",
-            ".xml",
-            ".json",
-            ".yaml",
-            ".csv"
-        };
-
-        public readonly string[] CodeExtList = {
-            ".rpyc~",
-            ".rpyc",
-            ".rpymc~",
-            ".rpymc"
-        };
-        
-        // Original: https://stackoverflow.com/a/60757602/3650856
-        private static string GetPythonPath(string requiredVersion = "", string maxVersion = "") {
-            string[] possiblePythonLocations = new string[3] {
-                @"HKLM\SOFTWARE\Python\PythonCore\",
-                @"HKCU\SOFTWARE\Python\PythonCore\",
-                @"HKLM\SOFTWARE\Wow6432Node\Python\PythonCore\"
-            };
-
-            //Version number, install path
-            Dictionary<string, string> pythonLocations = new Dictionary<string, string>();
-
-            foreach (string possibleLocation in possiblePythonLocations) {
-                string regKey = possibleLocation.Substring(0, 4), actualPath = possibleLocation.Substring(5);
-                RegistryKey theKey = (regKey == "HKLM" ? Registry.LocalMachine : Registry.CurrentUser);
-                RegistryKey theValue = theKey.OpenSubKey(actualPath);
-
-                if (theValue != null)
-                {
-                    foreach (string value in theValue.GetSubKeyNames())
-                    {
-                        RegistryKey productKey = theValue.OpenSubKey(value);
-                        if (productKey != null)
-                        {
-                            try
-                            {
-                                string pythonExePath = productKey.OpenSubKey("InstallPath")
-                                    ?.GetValue("ExecutablePath")
-                                    ?.ToString();
-
-                                // Get (Default) value instead if not found in ExecutablePath value
-                                if (string.IsNullOrEmpty(pythonExePath))
-                                {
-                                    pythonExePath = productKey.OpenSubKey("InstallPath")
-                                        ?.GetValue("")
-                                        .ToString();
-                                    if (!string.IsNullOrEmpty(pythonExePath))
-                                    {
-                                        pythonExePath += "python.exe";
-                                    }
-                                }
-
-                                if (!string.IsNullOrEmpty(pythonExePath))
-                                {
-                                    if (!pythonLocations.ContainsKey(value) && File.Exists(pythonExePath))
-                                    {
-                                        Debug.WriteLine("Got python version; " + value + " at path; " + pythonExePath);
-                                        pythonLocations.Add(value, pythonExePath);
-                                    }
-                                }
-                            }
-                            catch
-                            {
-                                // Object doesn't exist
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (pythonLocations.Count > 0)
-            {
-                System.Version desiredVersion = new System.Version(requiredVersion == "" ? "0.0.1" : requiredVersion);
-                System.Version maxPVersion = new System.Version(maxVersion == "" ? "999.999.999" : maxVersion);
-
-                string highestVersion = "";
-                string highestVersionPath = "";
-
-                foreach (KeyValuePair<string, string> pVersion in pythonLocations) {
-                    // TODO: if on 64-bit machine, prefer the 64 bit version over 32 and vice versa
-                    int index = pVersion.Key.IndexOf("-", StringComparison.Ordinal);
-                    string formattedVersion = Regex.Replace(index > 0 ? pVersion.Key.Substring(0, index) : pVersion.Key, @"[^0-9.]", "");
-
-                    System.Version thisVersion = new System.Version(formattedVersion);
-                    int comparison = desiredVersion.CompareTo(thisVersion);
-                    int maxComparison = maxPVersion.CompareTo(thisVersion);
-
-                    if (comparison <= 0) {
-                        // Version is greater or equal
-                        if (maxComparison >= 0) {
-                            desiredVersion = thisVersion;
-
-                            highestVersion = pVersion.Key;
-                            highestVersionPath = pVersion.Value;
-                        }
-                    }
-                }
-
-                Debug.WriteLine(highestVersion);
-                Debug.WriteLine(highestVersionPath);
-                return highestVersionPath;
-            }
-
-            return String.Empty;
         }
 
         public void LoadArchive(string filePath)
@@ -254,7 +72,7 @@ namespace RPA_Parser
             ArchiveInfo = GetArchiveInfo();
             _firstLine = GetFirstLine();
             ArchiveVersion = CheckSupportedVersion(GetVersion());
-            
+
             if (CheckVersion(ArchiveVersion, Version.RPA_2) || CheckVersion(ArchiveVersion, Version.RPA_3) || CheckVersion(ArchiveVersion, Version.RPA_3_2))
             {
                 _metadata = GetMetadata();
@@ -306,7 +124,7 @@ namespace RPA_Parser
                 default:
                     throw new Exception("Specified version is not supported.");
             }
-            
+
             return version;
         }
 
@@ -342,8 +160,10 @@ namespace RPA_Parser
 
         private string GetFirstLine()
         {
-            using StreamReader streamReader = new StreamReader(_archivePath, Encoding.UTF8);
-            return streamReader.ReadLine();
+            using (StreamReader streamReader = new StreamReader(_archivePath, Encoding.UTF8))
+            {
+                return streamReader.ReadLine();
+            }
         }
 
         private double GetVersion()
@@ -388,17 +208,17 @@ namespace RPA_Parser
         private long GetObfuscationKey()
         {
             long key = 0;
-            
+
             if (CheckVersion(ArchiveVersion, Version.RPA_3))
             {
-                for(int i = 2; i < _metadata.Length; i++)
+                for (int i = 2; i < _metadata.Length; i++)
                 {
                     key ^= Convert.ToInt64(_metadata[i], 16);
                 }
             }
             else if (CheckVersion(ArchiveVersion, Version.RPA_3_2))
             {
-                for(int i = 3; i < _metadata.Length; i++)
+                for (int i = 3; i < _metadata.Length; i++)
                 {
                     key ^= Convert.ToInt64(_metadata[i], 16);
                 }
@@ -406,10 +226,10 @@ namespace RPA_Parser
 
             return key;
         }
-        
-        private SortedDictionary<string,ArchiveIndex> GetIndexes()
+
+        private SortedDictionary<string, ArchiveIndex> GetIndexes()
         {
-            SortedDictionary<string,ArchiveIndex> indexList = new SortedDictionary<string,ArchiveIndex>();
+            SortedDictionary<string, ArchiveIndex> indexList = new SortedDictionary<string, ArchiveIndex>();
             object unpickledIndexes;
 
             string filePath = _archivePath;
@@ -417,7 +237,7 @@ namespace RPA_Parser
             {
                 filePath = _indexPath;
             }
-            
+
             using (BinaryReader reader = new BinaryReader(File.OpenRead(filePath), Encoding.UTF8))
             {
                 if (CheckVersion(ArchiveVersion, Version.RPA_2) || CheckVersion(ArchiveVersion, Version.RPA_3) || CheckVersion(ArchiveVersion, Version.RPA_3_2))
@@ -445,7 +265,7 @@ namespace RPA_Parser
 
                     if (blockSize != 0)
                     {
-                        byte[] buffer = reader.ReadBytes((int) blockSize);
+                        byte[] buffer = reader.ReadBytes((int)blockSize);
                         fileCompressed = fileCompressed.Concat(buffer).ToArray();
 
                         blockOffset += blockSize;
@@ -459,9 +279,9 @@ namespace RPA_Parser
                     unpickledIndexes = unpickler.loads(fileUncompressed);
                 }
             }
-            
+
             // Standardize output
-            foreach (DictionaryEntry kvp in (Hashtable) unpickledIndexes)
+            foreach (DictionaryEntry kvp in (Hashtable)unpickledIndexes)
             {
                 if (kvp.Value == null)
                 {
@@ -470,27 +290,27 @@ namespace RPA_Parser
 
                 ArchiveIndex indexEntry = new ArchiveIndex
                 {
-                    TreePath = (string) kvp.Key,
-                    ParentPath = Path.GetDirectoryName((string) kvp.Key),
+                    TreePath = (string)kvp.Key,
+                    ParentPath = Path.GetDirectoryName((string)kvp.Key),
                     InArchive = true
                 };
                 int counter = 0;
-                foreach (object[] value in (ArrayList) kvp.Value)
-                { 
+                foreach (object[] value in (ArrayList)kvp.Value)
+                {
                     Tuples index = new Tuples
                     {
                         Offset = Convert.ToInt64(value.GetValue(0)),
                         Length = Convert.ToInt64(value.GetValue(1))
                     };
-                    if ((long) value.Length == 3)
+                    if ((long)value.Length == 3)
                     {
                         if (value.GetValue(2).GetType() == typeof(byte[]))
                         {
-                            index.Prefix = (byte[]) value.GetValue(2);
+                            index.Prefix = (byte[])value.GetValue(2);
                         }
                         else
                         {
-                            index.Prefix = Encoding.UTF8.GetBytes((string) value.GetValue(2));
+                            index.Prefix = Encoding.UTF8.GetBytes((string)value.GetValue(2));
                         }
                     }
                     else
@@ -525,7 +345,7 @@ namespace RPA_Parser
         public SortedDictionary<string, ArchiveIndex> DeepCopyIndex(SortedDictionary<string, ArchiveIndex> originalIndex)
         {
             SortedDictionary<string, ArchiveIndex> indexCopy = new SortedDictionary<string, ArchiveIndex>();
-            
+
             foreach (KeyValuePair<string, ArchiveIndex> kvp in originalIndex)
             {
                 ArchiveIndex archIndex = new ArchiveIndex
@@ -536,7 +356,7 @@ namespace RPA_Parser
                     ParentPath = kvp.Value.ParentPath,
                     Length = kvp.Value.Length
                 };
-                
+
                 foreach (KeyValuePair<int, Tuples> kvpI in kvp.Value.Tuples)
                 {
                     Tuples index = new Tuples
@@ -545,277 +365,33 @@ namespace RPA_Parser
                         Offset = kvpI.Value.Offset,
                         Prefix = kvpI.Value.Prefix
                     };
-                    
+
                     archIndex.Tuples.Add(kvpI.Key, index);
                 }
-                
+
                 indexCopy.Add(kvp.Key, archIndex);
             }
-            
+
             return indexCopy;
         }
-        
-        public string rpycInfoBanner =
-            "RPYC file contains compiled RenPy code. To preview code we need to use external script called unrpyc for decompilation and Python 2.7 environment to run this script.";
 
-        public string ParseRPYC(byte[] file)
-        {
-            string decompiled = String.Empty;
-            if (PythonLocation == String.Empty)
-            {
-                throw new Exception(rpycInfoBanner + Environment.NewLine + Environment.NewLine + "ERROR: Python environment is not defined.");
-            }
-            
-            if (!File.Exists(PythonLocation))
-            {
-                throw new Exception(rpycInfoBanner + Environment.NewLine + Environment.NewLine + "ERROR: Defined Python environment cannot be found (" + PythonLocation + ").");
-            }
-
-            if (UnrpycLocation == String.Empty)
-            {
-                throw new Exception(rpycInfoBanner + Environment.NewLine + Environment.NewLine + "ERROR: Location of unrpyc script is not defined.");
-            }
-            
-            if (!File.Exists(UnrpycLocation))
-            {
-                throw new Exception(rpycInfoBanner + Environment.NewLine + Environment.NewLine + "ERROR: Defined location of unrpyc script cannot be found (" + UnrpycLocation + ").");
-            }
-
-            string tmpFile = Path.GetTempFileName();
-            string decompiledFile = tmpFile + ".rpy";
-            tmpFile += ".rpyc";
-            string result = String.Empty;
-            
-            try
-            {
-                File.WriteAllBytes(tmpFile, file);
-                
-                ProcessStartInfo start = new ProcessStartInfo();
-                start.FileName = PythonLocation;
-                start.Arguments = string.Format(@"""{0}"" {1} ""{2}""", UnrpycLocation, "--try-harder", tmpFile);
-                start.UseShellExecute = false;
-                start.RedirectStandardOutput = true;
-                start.RedirectStandardError = true;
-                start.CreateNoWindow = true;
-                using(Process process = Process.Start(start))
-                {
-                    using(StreamReader reader = process.StandardOutput)
-                    {
-                        result += reader.ReadToEnd();
-                    }
-                    using(StreamReader reader = process.StandardError)
-                    {
-                        result += reader.ReadToEnd();
-                    }
-                }
-                
-                decompiled = NormalizeNewLines(File.ReadAllText(decompiledFile));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("ERROR: Decompilation failed with following error:" + Environment.NewLine + 
-                                    Environment.NewLine + ex.Message + Environment.NewLine + Environment.NewLine + 
-                                    "Return from unrpyc:" + Environment.NewLine + Environment.NewLine + result);
-            }
-            finally
-            {
-                if (File.Exists(tmpFile))
-                {
-                    File.Delete(tmpFile);
-                }
-                if (File.Exists(decompiledFile))
-                {
-                    File.Delete(decompiledFile);
-                }
-            }
-            
-            /*
-            // Attempt to port unrpyc from Python to C#
-
-            if (Encoding.UTF8.GetString(code).StartsWith(RPCMagic.RPC_2))
-            {
-                long blockOffset = 10;
-                Dictionary<int, byte[]> chunkList = new Dictionary<int, byte[]>();
-
-                while (true)
-                {
-                    byte[] chunkPart = new byte[12];
-                    Buffer.BlockCopy(code, (int) blockOffset, chunkPart, 0, 12);
-                    object[] structData = StructConverter.Unpack("III", chunkPart); // slot, start, length
-                    if ((int) structData[0] == 0)
-                    {
-                        break;
-                    }
-                    blockOffset += 12;
-                    
-                    byte[] chunk = new byte[(int) structData[2]];
-                    Buffer.BlockCopy(code, (int) structData[1], chunk, 0, (int) structData[2]);
-                    
-                    chunkList.Add((int) structData[0], chunk);
-                }
-
-                byte[] fileUncompressed;
-                try
-                {
-                    fileUncompressed = ZlibStream.UncompressBuffer(chunkList[1]);
-                }
-                catch (ZlibException ex)
-                {
-                    throw new Exception("Parsed slot 1 is not Zlib BLOB. " + ex.Message);
-                }
-
-                if (!Encoding.UTF8.GetString(fileUncompressed).EndsWith("."))
-                {
-                    throw new Exception("Parsed uncompressed slot 1 is not simple pickle.");
-                }
-
-                // TODO: pickletools.dis => disassembly, seems like there is no out of the box alternative for this in C#
-
-                //decompiled = Encoding.UTF8.GetString(fileUncompressed);
-            }
-
-            throw new NotImplementedException(); // TODO: remove when done
-            /**/
-            
-            return decompiled;
-        }
-
-        public KeyValuePair<string, byte[]> GetPreviewRaw(string fileName)
-        {
-            KeyValuePair<string, object> data = GetPreview(fileName, true);
-            return new KeyValuePair<string, byte[]>(data.Key, (byte[]) data.Value);
-        }
-
-        public KeyValuePair<string, object> GetPreview(string fileName, bool returnRaw = false)
-        {
-            KeyValuePair<string, object> data = new KeyValuePair<string, object>(PreviewTypes.Unknown, null);
-
-            if (!Index.ContainsKey(fileName))
-            {
-                return data;
-            }
-
-            FileInfo fileInfo = new FileInfo(fileName);
-            byte[] bytes = ExtractData(fileName);
-
-            if (ImageExtList.Contains(fileInfo.Extension.ToLower()))
-            {
-                byte[] magicBytes = new byte[16];
-                Buffer.BlockCopy(bytes,0, magicBytes,0,16);
-
-                Image image;
-                if (fileInfo.Extension.ToLower() == ".webp" || Encoding.UTF8.GetString(magicBytes, 0, magicBytes.Length).Contains("WEBP"))
-                {
-                    image = new WebP().Decode(bytes);
-                }
-                else
-                {
-                    image = Image.FromStream(new MemoryStream(bytes));
-                }
-
-                data = new KeyValuePair<string, object>(PreviewTypes.Image, image);
-            }
-            else if (TextExtList.Contains(fileInfo.Extension.ToLower()))
-            {
-                data = new KeyValuePair<string, object>(PreviewTypes.Text, NormalizeNewLines(Encoding.UTF8.GetString(bytes, 0, bytes.Length)));
-            }
-            else if (CodeExtList.Contains(fileInfo.Extension.ToLower()))
-            {
-                string decompiledString = ParseRPYC(bytes);
-
-                if (decompiledString == String.Empty)
-                {
-                    data = new KeyValuePair<string, object>(PreviewTypes.Unknown, bytes);
-                }
-                else
-                {
-                    data = new KeyValuePair<string, object>(PreviewTypes.Text, decompiledString);
-                }
-            }
-            else if (AudioExtList.Contains(fileInfo.Extension.ToLower()))
-            {
-                data = new KeyValuePair<string, object>(PreviewTypes.Audio, bytes);
-            }
-            else if (VideoExtList.Contains(fileInfo.Extension.ToLower()))
-            {
-                data = new KeyValuePair<string, object>(PreviewTypes.Video, bytes);
-            }
-            else
-            {
-                data = new KeyValuePair<string, object>(PreviewTypes.Unknown, bytes);
-            }
-
-            if (returnRaw)
-            {
-                data = new KeyValuePair<string, object>(data.Key, bytes);
-            }
-
-            return data;
-        }
-
-        private string NormalizeNewLines(string text)
-        {
-            const string winNewLine = "\r\n";
-            const string linNewLine = "\n";
-            const string macNewLine = "\r";
-            
-            int countWin = Regex.Matches(text, winNewLine).Count;
-            int countLinux = Regex.Matches(text, linNewLine).Count;
-            int countMac = Regex.Matches(text, macNewLine).Count;
-            
-            string newLineSymbol = Environment.NewLine;
-            
-            if (countWin >= countLinux && countWin >= countMac)
-            {
-                newLineSymbol = winNewLine;
-            }
-            else if (countLinux >= countWin && countLinux >= countMac)
-            {
-                newLineSymbol = linNewLine;
-            }
-            else if (countMac >= countWin && countMac >= countLinux)
-            {
-                newLineSymbol = macNewLine;
-            }
-
-            text = text.Replace(newLineSymbol, Environment.NewLine);
-            
-            return text;
-        }
-
-        public byte[] ExtractData(string fileName)
+        public Stream ExtractData(string fileName)
         {
             if (!Index.ContainsKey(fileName))
             {
-                throw new Exception("Specified file does not exist in RenPy Archive.");
+                throw new FileNotFoundException("Specified file does not exist in RenPy Archive.");
             }
 
             if (Index[fileName].InArchive)
             {
-                using BinaryReader reader = new BinaryReader(File.OpenRead(_archivePath), Encoding.UTF8);
-                byte[] finalData = { };
-
-                foreach (KeyValuePair<int, Tuples> kvpI in Index[fileName].Tuples)
-                {
-                    reader.BaseStream.Seek(kvpI.Value.Offset, SeekOrigin.Begin);
-                    byte[] prefixData = kvpI.Value.Prefix;
-                    byte[] fileData = reader.ReadBytes((int) kvpI.Value.Length - kvpI.Value.Prefix.Length); // Exported file max size ~2.14 GB
-                    byte[] partData = new byte[finalData.Length + prefixData.Length + fileData.Length];
-                    Buffer.BlockCopy(finalData, 0, partData, 0, finalData.Length);
-                    Buffer.BlockCopy(prefixData, 0, partData, finalData.Length, prefixData.Length);
-                    Buffer.BlockCopy(fileData, 0, partData, finalData.Length + prefixData.Length, fileData.Length);
-                    finalData = partData;
-                }
-
-                return finalData;
+                return new RpaStream(Index[fileName], this);
             }
-            
-            return File.ReadAllBytes(Index[fileName].FullPath);
+
+            return File.OpenRead(Index[fileName].FullPath);
         }
 
         public string Extract(string fileName, string exportPath)
         {
-            byte[] finalData = ExtractData(fileName);
             string finalPath;
             if (exportPath.Trim() == String.Empty)
             {
@@ -831,7 +407,13 @@ namespace RPA_Parser
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(finalPath) ?? throw new InvalidOperationException());
-            File.WriteAllBytes(finalPath, finalData);
+            using (var source = ExtractData(fileName))
+            {
+                using (var dest = File.OpenWrite(finalPath))
+                {
+                    source.CopyTo(dest);
+                }
+            }
 
             return ArchiveInfo.DirectoryName + @"\" + fileName;
         }
@@ -842,7 +424,7 @@ namespace RPA_Parser
             {
                 archivePath = Regex.Replace(archivePath, @"\.rpi$", ".rpa", RegexOptions.IgnoreCase);
             }
-            
+
             if (!archivePath.ToLower().EndsWith(".rpa"))
             {
                 archivePath += ".rpa";
@@ -863,24 +445,21 @@ namespace RPA_Parser
             {
                 throw new Exception("Cannot overwrite same index file that is loaded.");
             }*/
-            
+
             BuildArchive(archivePath, indexPath, tmpPath);
 
             return archivePath;
         }
 
+        public event ProgressChangedEventHandler SaveProgress;
+
         private void BuildArchive(string archivePath, string indexPath, string tmpPath)
         {
             try
             {
-                if (!File.Exists(tmpPath + ".rpa"))
+                using (Stream stream = File.Open(tmpPath + ".rpa", FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    File.WriteAllBytes(tmpPath + ".rpa", new byte[] { });
-                }
-
-                using (Stream stream = File.Open(tmpPath + ".rpa", FileMode.Truncate))
-                {
-                    int archiveOffset;
+                    long archiveOffset;
                     switch (ArchiveVersion)
                     {
                         case Version.RPA_3_2:
@@ -904,10 +483,19 @@ namespace RPA_Parser
                     Random rnd = new Random();
 
                     // Update indexes
+                    //TODO: >2GB support
                     Hashtable indexes = new Hashtable();
+                    double i = 0;
                     foreach (KeyValuePair<string, ArchiveIndex> index in Index)
                     {
-                        byte[] content = ExtractData(index.Key);
+                        i++;
+                        var ms = new MemoryStream();
+                        using (var source = ExtractData(index.Key))
+                        {
+                            source.CopyTo(ms);
+                        }
+
+                        byte[] content = ms.ToArray();
 
                         if (Padding > 0)
                         {
@@ -916,7 +504,7 @@ namespace RPA_Parser
 
                             while (paddingLength > 0)
                             {
-                                paddingStr += Encoding.ASCII.GetString(new[] {(byte) rnd.Next(1, 255)});
+                                paddingStr += Encoding.ASCII.GetString(new[] { (byte)rnd.Next(1, 255) });
                                 paddingLength--;
                             }
 
@@ -926,6 +514,7 @@ namespace RPA_Parser
 
                         stream.Position = archiveOffset;
                         stream.Write(content, 0, content.Length);
+                        SaveProgress?.Invoke(this, new ProgressChangedEventArgs((int)(i / Index.Count * 100), index.Value));
 
                         List<object[]> indexData = new List<object[]>();
                         if (CheckVersion(ArchiveVersion, Version.RPA_3) ||
@@ -936,7 +525,7 @@ namespace RPA_Parser
                         }
                         else
                         {
-                            indexData.Add(new object[] {archiveOffset, content.Length});
+                            indexData.Add(new object[] { archiveOffset, content.Length });
                         }
 
                         archiveOffset += content.Length;
@@ -1021,6 +610,123 @@ namespace RPA_Parser
                 throw;
             }
         }
+
+        private class RpaStream : Stream
+        {
+            private readonly ArchiveIndex entry;
+            private readonly BinaryReader reader;
+
+            private int tupleIndex = 0;
+            private int tuplePosition = 0;
+            private bool inPrefix = true;
+            private long absolutePosition = 0;
+
+            public RpaStream(ArchiveIndex entry, RpaParser parser)
+            {
+                this.entry = entry;
+                reader = new BinaryReader(File.OpenRead(parser._archivePath), Encoding.UTF8);
+            }
+
+            public override bool CanRead => true;
+
+            public override bool CanSeek => true;
+
+            public override bool CanWrite => false;
+
+            public override long Length => entry.Length;
+
+            public override long Position { get => absolutePosition; set => Seek(value, SeekOrigin.Begin); }
+
+            public override void Flush() { return; }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                if (tupleIndex >= entry.Tuples.Count) return 0;
+                int bytesRead = count;
+                if (inPrefix)
+                {
+                    var remainingInPrefix = entry.Tuples[tupleIndex].Prefix.Length - tuplePosition;
+                    if (remainingInPrefix < bytesRead) bytesRead = remainingInPrefix;
+                    Array.Copy(entry.Tuples[tupleIndex].Prefix, tuplePosition, buffer, offset, bytesRead);
+                    tuplePosition += bytesRead;
+                    absolutePosition += bytesRead;
+                    if (tuplePosition == entry.Tuples[tupleIndex].Prefix.Length)
+                    {
+                        tuplePosition = 0;
+                        inPrefix = false;
+                    }
+                }
+                else
+                {
+                    var remainingInTuple = entry.Tuples[tupleIndex].Length - entry.Tuples[tupleIndex].Prefix.Length - tuplePosition;
+                    if (remainingInTuple < bytesRead) bytesRead = (int)remainingInTuple;
+                    reader.BaseStream.Seek(entry.Tuples[tupleIndex].Offset + tuplePosition, SeekOrigin.Begin);
+                    bytesRead = reader.Read(buffer, offset, bytesRead);
+                    tuplePosition += bytesRead;
+                    absolutePosition += bytesRead;
+                    if (tuplePosition == entry.Tuples[tupleIndex].Length - entry.Tuples[tupleIndex].Prefix.Length)
+                    {
+                        tupleIndex++;
+                        tuplePosition = 0;
+                        inPrefix = true;
+                    }
+                }
+                if (bytesRead < count && absolutePosition < entry.Length)
+                    return bytesRead + Read(buffer, offset + bytesRead, count - bytesRead);
+                return bytesRead;
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                long desiredPosition = offset;
+                if (origin == SeekOrigin.Current) desiredPosition += absolutePosition;
+                if (origin == SeekOrigin.End) desiredPosition += entry.Length;
+                if (desiredPosition < 0) desiredPosition = 0;
+                if (desiredPosition > entry.Length) desiredPosition = entry.Length;
+                absolutePosition = desiredPosition;
+                tupleIndex = 0;
+                tuplePosition = 0;
+                inPrefix = true;
+                if(desiredPosition == entry.Length)
+                {
+                    tupleIndex = entry.Tuples.Count;
+                    return entry.Length;
+                }
+                while (entry.Tuples[tupleIndex].Length <= desiredPosition)
+                {
+                    desiredPosition -= entry.Tuples[tupleIndex].Length; tupleIndex++;
+                }
+                if (tupleIndex == entry.Tuples.Count) return absolutePosition;
+                if (desiredPosition < entry.Tuples[tupleIndex].Prefix.Length)
+                {
+                    tuplePosition = (int)desiredPosition;
+                }
+                else
+                {
+                    inPrefix = false;
+                    tuplePosition = (int)desiredPosition - entry.Tuples[tupleIndex].Prefix.Length;
+                }
+
+                return absolutePosition;
+            }
+
+            public override void SetLength(long value)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                throw new NotImplementedException();
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                reader.Dispose();
+                base.Dispose(disposing);
+            }
+        }
+
     }
 
     // https://stackoverflow.com/a/28418846/3650856
@@ -1263,4 +969,5 @@ namespace RPA_Parser
             return Pack(items, true, out dummy);
         }
     }
+
 }

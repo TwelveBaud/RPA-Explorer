@@ -1,0 +1,57 @@
+on:
+    release:
+        types: [published]
+    workflow_dispatch: {}
+        
+
+jobs:
+    build:
+        name: Build
+        runs-on: windows-2025-vs2026
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+            - name: Add msbuild to PATH
+              uses: microsoft/setup-msbuild@v3
+            - name: Build
+              id: msbuild
+              run: msbuild ./RelEng/Release.msbuildproj -t:Build -bl:build.binlog -restore
+            - name: Upload artifacts for review
+              uses: actions/upload-artifact@v7
+              with:
+                path: ./RelEng/bin/*.zip
+                retention-days: 1
+            - name: Upload build log for review
+              uses: actions/upload-artifact@v7
+              if: ${{ steps.msbuild.outcome != 'skipped' }}
+              with:
+                path: build.binlog
+                retention-days: 1
+                archive: false
+            - name: Verify minimal build
+              run: |
+                test -e "./RelEng/obj/Minimal/RPA Explorer.exe"
+                test ! -e "./RelEng/obj/Minimal/Microsoft.WindowsAPICodePack.dll"
+                test ! -e "./RelEng/obj/Minimal/ExoticImages.previewer.dll"
+            - name: Verify main build
+              run: |
+                test -e "./RelEng/obj/Main/RPA Explorer.exe"
+                test -e "./RelEng/obj/Main/Microsoft.WindowsAPICodePack.dll"
+                test -e "./RelEng/obj/Main/ExoticImages.previewer.dll"
+                test -e "./RelEng/obj/Main/libx265.dll"
+                test ! -e "./RelEng/obj/Main/Media.previewer.dll"
+                test ! -e "./RelEng/obj/Main/libvlc/win-x64/libvlc.dll"
+            - name: Verify media add-on
+              run: |
+                test ! -e "./RelEng/obj/Media/RPA Explorer.exe"
+                test ! -e "./RelEng/obj/Media/Microsoft.WindowsAPICodePack.dll"
+                test ! -e "./RelEng/obj/Media/ExoticImages.previewer.dll"
+                test ! -e "./RelEng/obj/Media/libx265.dll"
+                test -e "./RelEng/obj/Media/Media.previewer.dll"
+                test -e "./RelEng/obj/Media/libvlc/win-x64/libvlc.dll"
+            - name: Attach artifacts to release
+              if: ${{ success() && github.event_name == 'release' }}
+              run: gh release upload $TAG ./RelEng/bin/*.zip
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                TAG: ${{ github.event.release.tag_name }}

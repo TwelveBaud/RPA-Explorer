@@ -1,5 +1,0 @@
-- Add documentation to code so library and explorer are easier to be understood and used.
-- LibVLC is ~300MiB in size, any way to make it smaller with same/similar video/audio support?
-- Find a good way how to distribute this application.
-- I would love RPYC parser to be part of this application, but for now, this is out of my abilities and also this might be an uphill battle that needs to be regularly updated and maintained, which requires larger commitment or other contributors.
-  - There is currently an option to pass path to unrpyc and Python 2.7 that will make preview possible

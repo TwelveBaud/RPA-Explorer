@@ -1,247 +1,131 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace RPA_Explorer
 {
-    public class Settings
+    public static class Settings
     {
-        private bool _loadingPending = false;
-        private readonly string _settingsPath;
-        
-        public Settings(string settingsPath)
-        {
-            _settingsPath = settingsPath;
-            LoadSettings();
-        }
+        private readonly static Dictionary<string, Dictionary<string, Dictionary<string, string>>> _settings = new();
+        private readonly static string settingsPath;
 
-        private void StoreSettings()
+        static Settings()
         {
-            if (!_loadingPending)
+            var appName = System.Reflection.Assembly.GetExecutingAssembly()?.GetName().Name;
+            var settingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName);
+            Directory.CreateDirectory(settingsDir);
+            settingsPath = Path.Combine(settingsDir, "settings.xml");
+            if (File.Exists(settingsPath))
             {
-                List<string> cfg = new List<string>();
-                
-                cfg.Add("language=" + GetLang().Name);
-                if (!string.IsNullOrEmpty(GetPython()))
+                try
                 {
-                    cfg.Add("python=" + GetPython());
+                    ReadSettings();
                 }
-                if (!string.IsNullOrEmpty(GetUnrpyc()))
-                {
-                    cfg.Add("unrpyc=" + GetUnrpyc());
-                }
-                if (!string.IsNullOrEmpty(GetArchive()))
-                {
-                    cfg.Add("archive=" + GetArchive());
-                }
-
-                if (File.Exists(_settingsPath))
-                {
-                    File.Delete(_settingsPath);
-                }
-                File.WriteAllLines(_settingsPath, cfg);
-                
-                LoadSettings();
+                catch { }
             }
-        }
-
-        private void LoadSettings()
-        {
-            _loadingPending = true;
-            
-            if (File.Exists(_settingsPath))
+            else
             {
-                string[] lines = File.ReadAllLines(_settingsPath);
-                foreach (string line in lines)
+                if (File.Exists(Path.Combine(settingsDir, "settings.ini")))
                 {
-                    string cfg = String.Empty;
-                    if (line.Contains("#"))
+                    foreach (var line in File.ReadAllLines(Path.Combine(settingsDir, "settings.ini")))
                     {
-                        cfg = line.Split('#')[0].Trim();
-                    }
-                    else
-                    {
-                        cfg = line.Trim();
-                    }
-
-                    if (!string.IsNullOrEmpty(cfg))
-                    {
-                        if (cfg.Contains("="))
+                        var setting = line.Split('=');
+                        if (setting.Length < 2) continue;
+                        var name = setting[0];
+                        var value = string.Join("=", setting.Skip(1));
+                        switch (name)
                         {
-                            string[] cfgSplit = cfg.Split('=');
-                            string name = cfgSplit[0].Trim().ToLower();
-                            string value = String.Empty;
-                            if (cfgSplit.Length > 1)
-                            {
-                                value = cfgSplit[1].Trim();
-                            }
-
-                            switch (name)
-                            {
-                                case "language":
-                                    SetLang(value);
-                                    break;
-                                case "python":
-                                    SetPython(value);
-                                    break;
-                                case "unrpyc":
-                                    SetUnrpyc(value);
-                                    break;
-                                case "archive":
-                                    SetArchive(value);
-                                    break;
-                            }
+                            case "language":
+                                if (value == "English") value = "en-US";
+                                SetSetting("Language", value, typeof(Program));
+                                break;
+                            case "python":
+                                SetSetting("PythonPath", value, "Code.previewer", "RpycPreviewer");
+                                break;
+                            case "unpyrc":
+                                SetSetting("ScriptPath", value, "Code.previewer", "RpycPreviewer");
+                                break;
+                            case "archive":
+                                SetSetting("LastOpenedFile", value, typeof(MainWindow));
+                                break;
                         }
                     }
                 }
-            } 
-            // Else use defaults
-
-            _loadingPending = false;
-        }
-        
-        /*
-         *
-         * LANGUAGE
-         * 
-         */
-
-        public class Language
-        {
-            public string Name;
-            public string Abbrev;
-
-            public Language(string name = "English", string abbrev = "EN")
-            {
-                Name = name;
-                Abbrev = abbrev;
             }
         }
-        
-        // Set language values and add to langList to enable language
-        private static readonly Language English = new Language("English", "EN");
-        private static readonly Language Test = new Language("TEST", "TST");
 
-        // List of enabled languages
-        public readonly Language[] LangList = {
-            English
-            /* *-/
-            // For testing only
-            , Test
-            /* */
-        };
-        
-        private Language _language = new Language("English", "EN");
-        
-        public Language GetLang()
+        public static string GetSetting(string key, Type onBehalfOf = null)
         {
-            return _language;
+            onBehalfOf ??= GetCaller();
+            if (_settings.TryGetValue(onBehalfOf.Assembly.GetName().Name.Replace(" ", ""), out var assem) && assem.TryGetValue(onBehalfOf.FullName, out var type) && type.TryGetValue(key, out var value))
+                return value;
+            return null;
         }
 
-        public void SetLang(string language)
+        public static void SetSetting(string key, string value, Type onBehalfOf = null)
         {
-            bool isValid = false;
-            foreach (Language lang in LangList)
+            onBehalfOf ??= GetCaller();
+            var assem = onBehalfOf.Assembly.GetName().Name.Replace(" ", "");
+            var type = onBehalfOf.FullName;
+            SetSetting(key, value, assem, type);
+        }
+
+        private static void SetSetting(string key, string value, string assem, string type)
+        {
+            if (!_settings.ContainsKey(assem)) _settings[assem] = new();
+            if (!_settings[assem].ContainsKey(type)) _settings[assem][type] = new();
+            _settings[assem][type][key] = value;
+            WriteSettings();
+        }
+
+        private static void ReadSettings()
+        {
+            var doc = XDocument.Load(settingsPath);
+            var root = doc.Root;
+            foreach (var assemXml in root.Elements())
             {
-                if (language == lang.Name || language == lang.Abbrev)
+                _settings[assemXml.Name.LocalName] = new();
+                foreach (var typeXml in assemXml.Elements())
                 {
-                    _language = lang;
-                    isValid = true;
-                    break;
+                    _settings[assemXml.Name.LocalName][typeXml.Name.LocalName] = new();
+                    foreach (var settingXml in typeXml.Elements())
+                    {
+                        _settings[assemXml.Name.LocalName][typeXml.Name.LocalName][settingXml.Name.LocalName] = settingXml.Value;
+                    }
                 }
             }
-
-            if (!isValid)
-            {
-                // Default
-                _language = English;
-            }
-
-            StoreSettings();
-        }
-        
-        /*
-         *
-         * PYTHON PATH
-         * 
-         */
-        
-        private string _python = String.Empty;
-        
-        public string GetPython()
-        {
-            return _python;
         }
 
-        public void SetPython(string path)
+        private static void WriteSettings()
         {
-            if (File.Exists(path))
+            var doc = new XDocument();
+            var root = new XElement("Settings");
+            foreach (var assem in _settings)
             {
-                _python = path;
+                var assemXml = new XElement(assem.Key);
+                foreach (var type in assem.Value)
+                {
+                    var typeXml = new XElement(type.Key);
+                    foreach (var key in type.Value)
+                    {
+                        var keyXml = new XElement(key.Key);
+                        keyXml.Add(key.Value);
+                        typeXml.Add(keyXml);
+                    }
+                    assemXml.Add(typeXml);
+                }
+                root.Add(assemXml);
             }
-            else
-            {
-                // Default
-                _python = String.Empty;
-            }
-
-            StoreSettings();
-        }
-        
-        /*
-         *
-         * UNRPYC PATH
-         * 
-         */
-        
-        private string _unrpyc = String.Empty;
-        
-        public string GetUnrpyc()
-        {
-            return _unrpyc;
+            doc.Add(root);
+            doc.Save(settingsPath);
         }
 
-        public void SetUnrpyc(string path)
+        private static Type GetCaller()
         {
-            if (File.Exists(path))
-            {
-                _unrpyc = path;
-            }
-            else
-            {
-                // Default
-                _unrpyc = String.Empty;
-            }
-
-            StoreSettings();
-        }
-        
-        /*
-         *
-         * LAST ARCHIVE PATH
-         * 
-         */
-        
-        private string _archive = String.Empty;
-        
-        public string GetArchive()
-        {
-            return _archive;
-        }
-
-        public void SetArchive(string path)
-        {
-            if (File.Exists(path))
-            {
-                _archive = path;
-            }
-            else
-            {
-                // Default
-                _unrpyc = String.Empty;
-            }
-
-            StoreSettings();
+            var trace = new System.Diagnostics.StackTrace();
+            return trace.GetFrame(2).GetMethod().DeclaringType;
         }
     }
 }
