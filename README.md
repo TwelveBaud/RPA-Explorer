@@ -1,46 +1,64 @@
 # RPA Explorer
 
-Graphical explorer for RenPy Archives. This tool brings ability to extract, create new or change existing RPA archives all in one window. It also provides content preview for most common files in these packages. Initial parser code was inspired by [RPATools](https://github.com/Shizmob/rpatool), so in case you find this tool useful, go give them a thumbs up as well. Now it even can try to preview compiled RenPy files (conditions apply, see <sup>[[1]](#reference1)</sup>).
+Graphical explorer for RenPy Archives. This tool brings ability to extract,
+create new or change existing RPA archives all in one window. It also provides
+content preview for most common files in these packages. Initial parser code
+was inspired by [RPATools](https://github.com/Shizmob/rpatool), so in case you
+find this tool useful, go give them a thumbs up as well.
+Now it even can try to preview compiled RenPy files (conditions apply[^1]).
 
-#### Note:
-
-This is a fan made application and there is no guarantee of further development or fixes. For video support LibVLC library is used and this library has ~300MiB in size so this is the reason why this application is so big, I haven't found a better way around this yet.
+> [!NOTE]
+> This is a fan made application and there is no guarantee of further
+development or fixes. External libraries are used for decompilation[^1] and
+media playback[^2], which are downloaded at runtime and may take up a
+surprising amount of space and processing power, are not the responsibility
+of the authors, and may become unavailable at any time. Use at your own risk.
 
 ### Supported file types for preview:
 
-- Text: py, rpy~, rpy, txt, log, nfo, htm, html, xml, json, yaml, csv
-- Video: 3gp, flv, mov, mp4, ogv, swf, mpg, mpeg, avi, mkv, wmv, webm
-- Audio: aac, ac3, flac, mp3, wma, wav, ogg, cpc
-- Images: jpeg, jpg, bmp, tiff, png, webp, exif, ico, gif
-- Compilations<sup>[[1]](#reference1)</sup>: rpyc~, rpymc~, rpyc, rpymc
+- Text: py, rpy, txt, log, nfo, htm, html, xml, json, yaml, toml, csv
+- Video[^2]: 3gp, flv, mov, mp4, ogv, swf, mpg, mpeg, avi, mkv, wmv, webm, [others](https://code.videolan.org/videolan/vlc/-/blob/master/include/vlc_interface.h)
+- Audio[^2]: aac, ac3, flac, mp3, wma, wav, ogg, cpc, [others](https://code.videolan.org/videolan/vlc/-/blob/master/include/vlc_interface.h)
+- Images: jpeg, jpg, bmp, tiff, png, webp, exif, ico, gif, webp[^3], avif[^3], heif[^3]
+- Compilations[^1]: rpyc, rpymc
 
-### References
+[^1]: To decompile Ren'Py script, you need a copy of [Python](https://www.python.org)
+and a copy of [Unrpyc](https://github.com/CensoredUsername/unrpyc). The app
+will download them for you if you don't have them.
 
-<a name="reference1"></a>[1]: Path to Python 2.7 environment and [unrpyc](https://github.com/CensoredUsername/unrpyc) on your local machine must be provided to attempt decompilation.
+[^2]: To play these file types, an embedded copy of the [VideoLAN Client](https://www.videolan.org)
+is required. This isn't included in the standard RPA Explorer download and
+will be downloaded on first use. Only available and tested on Windows.
 
----
-
-### Download link:
-
-[RPA Explorer.7z](https://github.com/UniverseDevel/RPA-Explorer/blob/master/RPA%20Explorer/bin/Release/net461/RPA%20Explorer.7z)
-
----
-
-### TODO List:
-
-[TODO.md](https://github.com/UniverseDevel/RPA-Explorer/blob/master/TODO.md)
+[^3]: These file types aren't included in .NET and rely on third-party
+libraries included with the main download. Only available and tested on
+Windows.
 
 ### Known Issues:
 
-- When selecting/unselecting objects too fast will not update selections for child or parent objects, this seems to be a TreeView bug/shortcomming and there is not much I can do with it.
-- Some video/audio formats will not update time played or total video time and this seems to be LibVLC library issue.
-- When browsing trough videos, after some time (and after some ammount of videos loaded) application freezes. So far I am unable to tell if I am handling objects incorrectly or it is a LibVLC problem.
+- There's a bug in .NET's TreeView that can cause whether an item is checked
+  or not to become out of sync with its appearance and children. Please take a
+  moment between checking or unchecking things to avoid this issue.
+- Some multimedia files don't include enough information for VLC to calculate
+  positions or durations. This is a limitation of the file, not VLC.
+- There's an issue in VLCSharp that causes it to repeatedly unload and reload
+  VLC instead of reusing it between previews. Because of the large number of
+  codecs included in VLC, this can cause the app to freeze if an unload
+  coincidentally collides with a reload. More investigation is necessary, but
+  in the meantime please take your time changing selections between media.
 
-#### Images preview:
-![1](https://user-images.githubusercontent.com/47400898/154856556-1da3d011-5631-4100-972c-f6e844967242.png)
-#### Video preview:
-![2](https://user-images.githubusercontent.com/47400898/154856560-71837ed7-899c-43bb-ab0d-3a10dd7844e8.png)
-#### Text files preview:
-![3](https://user-images.githubusercontent.com/47400898/154856564-1a588bdd-3412-491d-a070-078e17c42d19.png)
+### Previews:
 
-The software is provided "as is", without a warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and non-infringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.
+![Text of "The Question"](docs/text.png)
+
+![Image of Sylvie from "The Question"](docs/images.PNG)
+
+![Sound file from "The Question"](docs/media.png)
+
+The software is provided "as is", without a warranty of any kind, express or
+implied, including but not limited to the warranties of merchantability,
+fitness for a particular purpose and non-infringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other
+liability, whether in an action of contract, tort or otherwise, arising from,
+out of or in connection with the software or the use or other dealings
+in the software.
