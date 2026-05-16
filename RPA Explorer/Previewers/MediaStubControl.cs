@@ -125,7 +125,7 @@ namespace RPA_Explorer.Previewers
                 var rawVersion = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.Split('+');
                 var http = new HttpClient();
                 http.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("RPAExplorer", typeof(MainWindow).Assembly.GetName().Version.ToString()));
-                var manifestStr = await http.GetStringAsync("https://api.github.com/repos/TwelveBaud/RPA-Explorer/releases/tags/" + rawVersion[0]);
+                var manifestStr = await http.GetStringAsync("https://api.github.com/repos/TwelveBaud/RPA-Explorer/releases/tags/v" + rawVersion[0]);
                 var manifestObj = JObject.Parse(manifestStr);
                 var downloadUrl = manifestObj["assets"].FirstOrDefault(asset => asset["name"].Value<string>().Contains("Media"))["browser_download_url"].Value<string>();
                 ctx.UpdateStatus(string.Format(Lang.MediaStub_Downloading_file, downloadUrl), 20, 100);

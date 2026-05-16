@@ -1,0 +1,184 @@
+<Project DefaultTargets="Build">
+	<PropertyGroup>
+		<VersionPrefix>1.1.0</VersionPrefix>
+	</PropertyGroup>
+
+  <UsingTask
+    TaskName="ProjectFileDiscovery"
+    TaskFactory="RoslynCodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+    <ParameterGroup>
+    	<Projects ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+    	<OutputFiles ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="Microsoft.Build.Framework"/>
+      <Using Namespace="Microsoft.Build.Utilities"/>
+      <Using Namespace="System.Collections"/>
+      <Using Namespace="System.Collections.Generic"/>
+      <Using Namespace="System.IO"/>
+      <Code Type="Class" Language="cs">
+      	<![CDATA[
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+
+public class ProjectFileDiscovery : Task
+{
+    private class DuckTaskItem : ITaskItem
+    {
+        internal DuckTaskItem(FileInfo file, ITaskItem project)
+        {
+            var basename = project.GetMetadata("Filename");
+            basename = basename.Substring(0, basename.Length - ".previewer".Length);
+            var projectDir = Path.GetDirectoryName(project.GetMetadata("FullPath"));
+
+            project.CopyMetadataTo(this);
+
+            _metadata["FullPath"] = file.FullName;
+            _metadata["RootDir"] = file.Directory.Root.FullName;
+            _metadata["Directory"] = file.DirectoryName.Substring(_metadata["RootDir"].Length);
+            _metadata["Extension"] = file.Extension;
+            _metadata["Filename"] = file.Name.Substring(0, file.Name.Length - file.Extension.Length);
+            _metadata["Identity"] = ItemSpec = file.FullName.Replace(projectDir, Path.GetDirectoryName(project.ItemSpec));
+            _metadata["RelativeDir"] = Path.GetDirectoryName(ItemSpec);
+            _metadata["RecursiveDir"] = file.DirectoryName.Replace(Path.Combine(projectDir, "bin", "Release", "net481"), "");
+            _metadata["ModifiedTime"] = file.LastWriteTimeUtc.ToString("O");
+            _metadata["CreatedTime"] = file.CreationTimeUtc.ToString("O");
+            _metadata["AccessedTime"] = file.LastAccessTimeUtc.ToString("O");
+
+            _metadata["PreviewerName"] = basename;
+        }
+
+        private Dictionary<string, string> _metadata = new Dictionary<string, string>();
+
+        public string ItemSpec { get; set; }
+
+        public ICollection MetadataNames => _metadata.Keys;
+
+        public int MetadataCount => MetadataCount;
+
+        public IDictionary CloneCustomMetadata()
+        {
+            var newMetadata = new Dictionary<string, string>();
+            foreach (var oldItem in _metadata)
+            {
+                newMetadata[oldItem.Key] = oldItem.Value;
+            }
+            return newMetadata;
+        }
+
+        public void CopyMetadataTo(ITaskItem destinationItem)
+        {
+            foreach (var item in _metadata)
+            {
+                destinationItem.SetMetadata(item.Key, item.Value);
+            }
+        }
+
+        public string GetMetadata(string metadataName)
+        {
+            return _metadata.ContainsKey(metadataName) ? _metadata[metadataName] : string.Empty;
+        }
+
+        public void RemoveMetadata(string metadataName)
+        {
+            _metadata.Remove(metadataName);
+        }
+
+        public void SetMetadata(string metadataName, string metadataValue)
+        {
+            _metadata[metadataName] = metadataValue;
+        }
+    }
+
+    [Required]
+    public ITaskItem[] Projects { get; set; }
+
+    [Output]
+    public ITaskItem[] OutputFiles { get; set; }
+
+    public override bool Execute()
+    {
+        var outputs = new List<ITaskItem>();
+        foreach (var project in Projects)
+        {
+            var targetDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(project.GetMetadata("FullPath")), "bin", "Release", "net481"));
+            foreach (var fileinfo in targetDir.GetFiles("*", SearchOption.AllDirectories))
+            {
+                // Do not copy PDBs or XDoc
+                if (fileinfo.Extension == ".pdb" || fileinfo.Extension == ".xml")
+                    continue;
+                // VLC is copied separately
+                if (fileinfo.FullName.Contains("libvlc" + Path.DirectorySeparatorChar))
+                    continue;
+                outputs.Add(new DuckTaskItem(fileinfo, project));
+            }
+        }
+        OutputFiles = outputs.ToArray();
+        return true;
+    }
+}
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+	<Target Name="Clean">
+		<ItemGroup>
+			<Debris Include="obj/*" Exclude="obj/Release"/>
+		</ItemGroup>
+		<RemoveDir Directories="@(Debris)"/>
+	</Target>
+	<Target Name="Restore">
+	<ItemGroup>
+		<CoreBuild Include="../RPA Explorer/RPA Explorer.csproj" />
+		<ParserBuild Include="../RPA Parser/RPAParser.csproj" />
+		<PluginsBuild Include="../*.previewer/*.csproj">
+			<AdditionalProperties>Architecture=x64;VlcWindowsX64Enabled=true</AdditionalProperties>
+		</PluginsBuild>
+	</ItemGroup>
+		<MSBuild Projects="@(CoreBuild)" Properties="Configuration=Minimal" Targets="Restore"/>
+		<MSBuild Projects="@(CoreBuild);@(ParserBuild);@(PluginsBuild)" Properties="Configuration=Release" Targets="Restore"/>
+	</Target>
+	<Target Name="Compile" DependsOnTargets="Restore">
+	<ItemGroup>
+		<CoreBuild Include="../RPA Explorer/RPA Explorer.csproj" />
+		<ParserBuild Include="../RPA Parser/RPAParser.csproj" />
+		<PluginsBuild Include="../*.previewer/*.csproj">
+			<AdditionalProperties>Architecture=x64;VlcWindowsX64Enabled=true</AdditionalProperties>
+		</PluginsBuild>
+	</ItemGroup>
+		<MSBuild Projects="@(CoreBuild);@(ParserBuild);@(PluginsBuild)" Properties="Configuration=Release" Targets="Build"/>
+		<MSBuild Projects="@(CoreBuild)" Properties="Configuration=Minimal" Targets="Build"/>
+	</Target>
+	<Target Name="Collect" DependsOnTargets="Compile">
+		<ItemGroup>
+			<Core Include="../RPA Explorer/bin/Minimal/net481/**" Exclude="**/*.pdb;**/*.xml;**/Microsoft.WindowsAPICodePack*.dll;**/Newtonsoft.Json.dll"><Set>Minimal</Set></Core>
+			<Core Include="../RPA Explorer/bin/Release/net481/**" Exclude="**/*.pdb;**/*.xml"><Set>Main</Set></Core>
+			<Previewer Include="../*.previewer/*.csproj"/>
+			<VlcFiles Include="../Media.previewer/bin/Release/net481/libvlc/win-x64/**"/>
+		</ItemGroup>
+		<RemoveDir Directories="obj/*"/>
+		<Copy SourceFiles="@(Core)" DestinationFolder="obj/%(Core.Set)/%(RecursiveDir)"/>
+		<ProjectFileDiscovery Projects="@(Previewer)">
+			<Output TaskParameter="OutputFiles" ItemName="PreviewerFiles"/>
+		</ProjectFileDiscovery>
+		<Copy SourceFiles="@(PreviewerFiles->WithoutMetadataValue('PreviewerName','Media'))" DestinationFolder="obj/Main/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(PreviewerFiles->WithMetadataValue('PreviewerName','Media'))" DestinationFolder="obj/Media/%(RecursiveDir)"/>
+		<Delete Files="@(Core->'obj/Media/%(RecursiveDir)/%(Filename)%(Extension)')"/>
+		<Copy SourceFiles="@(VlcFiles)" DestinationFolder="obj/Media/libvlc/win-x64/%(RecursiveDir)"/>
+	</Target>
+	<Target Name="Bundle" DependsOnTargets="Collect">
+		<ItemGroup>
+			<Bundle Include="obj/Minimal"><Set>Minimal</Set></Bundle>
+			<Bundle Include="obj/Main"><Set>Main</Set></Bundle>
+			<Bundle Include="obj/Media"><Set>Media</Set></Bundle>
+		</ItemGroup>
+		<MakeDir Directories="bin" />
+		<ZipDirectory SourceDirectory="@(Bundle)" DestinationFile="bin/RPAExplorer-%(Bundle.Set)-$(VersionPrefix).zip" Overwrite="True"/>
+	</Target>
+	<Target Name="Build" DependsOnTargets="Compile;Collect;Bundle"></Target>
+</Project>
