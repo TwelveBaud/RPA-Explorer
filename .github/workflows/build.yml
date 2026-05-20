@@ -51,7 +51,7 @@ jobs:
                 test -e "./RelEng/obj/Media/libvlc/win-x64/libvlc.dll"
             - name: Attach artifacts to release
               if: ${{ success() && github.event_name == 'release' }}
-              run: gh release upload $TAG ./RelEng/bin/*.zip
+              run: gh release upload $env:TAG ([string]::Join(" ", (Get-ChildItem ./RelEng/bin/*.zip)))
               env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 TAG: ${{ github.event.release.tag_name }}

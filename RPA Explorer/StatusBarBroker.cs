@@ -57,8 +57,8 @@ namespace RPA_Explorer
             _window.Invoke(() =>
             {
                 _window.sblblStatus.Text = newString;
-                _window.stsprgProgress.Value = newValue;
                 _window.stsprgProgress.Maximum = newMax;
+                _window.stsprgProgress.Value = newValue;
             });
         }
     }
